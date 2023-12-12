@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:medilinks_doctor_app/Constants/const_files.dart';
 import 'package:medilinks_doctor_app/Constants/screennavigation.dart';
 import 'package:medilinks_doctor_app/Screens/ChangePassword/change_password.dart';
+import 'package:medilinks_doctor_app/Screens/EditProfileScreen/EditProfileScreen.dart';
 import 'package:medilinks_doctor_app/Screens/Login/login_page.dart';
 
 
@@ -42,7 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       body: Container(
         height: MediaQuery.of(context).size.height,
-        color: Colors.white,
+        color: ConstColor.backgroundColor,
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -82,12 +83,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
 
-                      SizedBox(height: 7,),
+                      SizedBox(height: 4,),
 
                       Container(
                         alignment: Alignment.centerLeft,
                         padding: EdgeInsets.only( left: 10, right: 20),
                         child: Text("johnmartin1999@gmail.com"
+                          ,style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[600]
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 3,),
+
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        padding: EdgeInsets.only( left: 10, right: 20),
+                        child: Text("91 9876543210"
                           ,style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
@@ -105,45 +120,91 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SizedBox(height: 7,),
 
               Container(
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(8),topRight: Radius.circular(8),)
+                ),
+                margin: EdgeInsets.only(left: 10,right: 10),
+                padding: EdgeInsets.only(top: 15,bottom: 15),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        alignment: Alignment.centerLeft,
+                        padding: EdgeInsets.only(left: 20, right: 20),
+                        child: Text("City"
+                          ,style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black
+                          ),
+                        ),
+                      ),
+                    ),
+
+
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      padding: EdgeInsets.only(left: 20, right: 20),
+                      child: Text("Mumbai"
+                        ,style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey[600]
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              Container(
                 height: 0.5,
                 color: Colors.grey,
                 margin : EdgeInsets.only(left: 20, right: 20),
               ),
 
-              SizedBox(height: 15,),
 
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      padding: EdgeInsets.only(left: 20, right: 20),
-                      child: Text("City"
-                        ,style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black
+              InkWell(
+                onTap: ()
+                {
+                  pushTo(context, EditProfileScreen());
+                },
+                child: Container(
+                  decoration: const BoxDecoration(
+                      color: Colors.white,
+                  ),
+                  margin: EdgeInsets.only(left: 10,right: 10),
+                  padding: EdgeInsets.only(top: 15,bottom: 15),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only(left: 10, right: 20),
+                          child: Text("Edit Profile"
+                            ,style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-
-
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.only(left: 20, right: 20),
-                    child: Text("Mumbai"
-                      ,style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey[600]
+                      GestureDetector(
+                        onTap: ()
+                        {
+                          pushTo(context, EditProfileScreen());
+                        },
+                        child: Container(
+                          child:  Icon(Icons.arrow_forward_ios_rounded, size: 17,color: Colors.grey[600],),
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 10,),
+                    ],
                   ),
-                ],
+                ),
               ),
-
-              SizedBox(height: 15,),
 
               Container(
                 height: 0.5,
@@ -154,7 +215,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Container(
                 decoration: const BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+                ),
+                margin: EdgeInsets.only(left: 10,right: 10),
+                padding: EdgeInsets.only(top: 15,bottom: 15),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        alignment: Alignment.centerLeft,
+                        padding: EdgeInsets.only(left: 10, right: 20),
+                        child: Text("Contact Us"
+                          ,style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black
+                          ),
+                        ),
+                      ),
+                    ),
+
+
+                    GestureDetector(
+                      onTap: (){
+                        //    pushTo(context, PrivacyPolicyScreenView());
+                      },
+                      child: Container(
+                        child:  Icon(Icons.arrow_forward_ios_rounded, size: 17,color: Colors.grey[600],),
+                      ),
+                    ),
+                    const SizedBox(width: 10,),
+                  ],
+                ),
+              ),
+
+              Container(
+                height: 0.5,
+                color: Colors.grey,
+                margin : EdgeInsets.only(left: 20, right: 20),
+              ),
+
+              Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
                 ),
                 height: 50,
                 margin: EdgeInsets.only(left: 10, right: 10),
@@ -227,7 +329,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         //  pushTo(context, PrivacyPolicyScreenView());
                       },
                       child: Container(
-                        child: const Text("Contact Us", style: TextStyle(
+                        child: const Text("Terms & Conditions", style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w500,
                             fontSize: 18
@@ -244,7 +346,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 
                     GestureDetector(
-                      onTap: (){
+                      onTap: ()
+                      {
                         //    pushTo(context, PrivacyPolicyScreenView());
                       },
                       child: Container(
@@ -264,8 +367,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               Container(
                 decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(8), bottomRight: Radius.circular(8))
+                  color: Colors.white,
                 ),
                 height: 50,
                 margin: EdgeInsets.only(left: 10, right: 10),
@@ -277,92 +379,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     const SizedBox(width: 10,),
 
-                    Expanded(child: GestureDetector(
-                      onTap: ()
-                      {
-                        //  pushTo(context, PrivacyPolicyScreenView());
-                      },
-                      child: Container(
-                        child: Text("Terms & Conditions", style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18
-                        ),
-                        ),
-                        height: 50,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                        ),
-                        alignment: Alignment.centerLeft,
-                      ),
-                    )
+                    Expanded(
+                        child: GestureDetector(
+                          onTap: ()
+                          {
+                            pushTo(context, ChangePassword());
+                          },
+                          child: Container(
+                            child: Text("Change Password", style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 18
+                            ),
+                            ),
+                            height: 50,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                            ),
+                            alignment: Alignment.centerLeft,
+                          ),
+                        )
                     ),
 
 
                     GestureDetector(
                       onTap: (){
-                        //    pushTo(context, PrivacyPolicyScreenView());
-                      },
-                      child: Container(
-                        child: Icon(Icons.arrow_forward_ios_rounded, size: 17,color: Colors.grey[600],),
-                      ),
-                    ),
-
-
-                    const SizedBox(width: 10,),
-
-                  ],
-                ),
-              ),
-
-              Container(
-                height: 0.5,
-                color: Colors.grey,
-                margin : EdgeInsets.only(left: 20, right: 20),
-              ),
-
-              Container(
-                decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(8), bottomRight: Radius.circular(8))
-                ),
-                height: 50,
-                margin: EdgeInsets.only(left: 10, right: 10),
-                alignment: Alignment.center,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-
-                    const SizedBox(width: 10,),
-
-                    Expanded(child: GestureDetector(
-                      onTap: ()
-                      {
                         pushTo(context, ChangePassword());
                       },
                       child: Container(
-                        child: const Text("Change Password", style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18
-                        ),
-                        ),
-                        height: 50,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                        ),
-                        alignment: Alignment.centerLeft,
-                      ),
-                    )
-                    ),
-
-
-                    GestureDetector(
-                      onTap: (){
-                        //    pushTo(context, PrivacyPolicyScreenView());
-                      },
-                      child: Container(
                         child: Icon(Icons.arrow_forward_ios_rounded, size: 17,color: Colors.grey[600],),
                       ),
                     ),
@@ -379,7 +423,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: Colors.grey,
                 margin : EdgeInsets.only(left: 20, right: 20),
               ),
-
 
               Container(
                 decoration: const BoxDecoration(
@@ -399,9 +442,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Expanded(child: GestureDetector(
                       onTap: ()
                       {
+
+
+
                         replaceRoute(context, LoginPage());
                       },
                       child: Container(
+                        padding: EdgeInsets.only(right: 20),
                         child: const Text("Logout", style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w500,
@@ -414,33 +461,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         alignment: Alignment.centerLeft,
                       ),
-                    )
-                    ),
-
-
-                    GestureDetector(
-                      onTap: (){
-                        replaceRoute(context, LoginPage());
-                      },
-                      child: Container(
-                        child: Icon(Icons.arrow_forward_ios_rounded, size: 17,color: Colors.grey[600],),
-                      ),
-                    ),
-
+                    )),
 
                     const SizedBox(width: 10,),
-
                   ],
                 ),
               ),
-
-              Container(
-                height: 0.5,
-                color: Colors.grey,
-                margin : EdgeInsets.only(left: 20, right: 20),
-              ),
-
-
             ],
           ),
         ),

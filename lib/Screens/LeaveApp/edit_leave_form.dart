@@ -3,23 +3,25 @@ import 'package:intl/intl.dart';
 import 'package:medilinks_doctor_app/Constants/const_files.dart';
 import 'package:medilinks_doctor_app/common/theme_helper.dart';
 
-class AddJourneyPlaner extends StatefulWidget {
-  const AddJourneyPlaner({Key? key}) : super(key: key);
+
+class EditLeaveForm extends StatefulWidget {
+  const EditLeaveForm({Key? key}) : super(key: key);
 
   @override
-  State<AddJourneyPlaner> createState() => _AddJourneyPlanerState();
+  State<EditLeaveForm> createState() => _EditLeaveForm();
 }
 
-class _AddJourneyPlanerState extends State<AddJourneyPlaner> {
+class _EditLeaveForm extends State<EditLeaveForm> {
   final _formKey = GlobalKey<FormState>();
   bool checkedValue = false;
   bool checkboxValue = false;
-
+  String? _leaveName;
+  List<String> leave_list = ["Single","Multiple"];
+  String? _leaveLocation;
+  List<String> leave_type = ["Casual Leave","Sick Leave"];
 
   var fromController = new TextEditingController();
   var toDateController = new TextEditingController();
-  var doctorController = TextEditingController();
-  List<String> doctors = [];
 
 
 
@@ -46,7 +48,7 @@ class _AddJourneyPlanerState extends State<AddJourneyPlaner> {
           ),
         ),
         title: Text(
-          "Add Journey Planer",
+          "Leave App",
           style: TextStyle(
               fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white),
         ),
@@ -55,11 +57,10 @@ class _AddJourneyPlanerState extends State<AddJourneyPlaner> {
       body: Container(
         margin: const EdgeInsets.fromLTRB(0, 50, 0, 10),
         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-        alignment: Alignment.topCenter,
         color: Colors.white,
-        height: MediaQuery.of(context).size.height,
         child: SingleChildScrollView(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
                 alignment: Alignment.center,
@@ -68,18 +69,95 @@ class _AddJourneyPlanerState extends State<AddJourneyPlaner> {
 
               SizedBox(height: 50,),
 
+
               Container(
-                margin: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+                margin: const EdgeInsets.fromLTRB(25,0, 25, 0),
                 decoration: ThemeHelper().inputBoxDecorationShaddow(),
-                child: TextFormField(
-                  decoration: ThemeHelper().textInputDecoration('City *', 'Enter City'),
+                child:  Container(
+                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade400,width: 1),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(100)
+                  ),
+                  child: DropdownButton(
+                    underline: SizedBox(height: 0,),
+                    hint: const Text('Type Of Leave *'
+                      ,style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w400
+                      ),
+                    ), // Not necessary for Option 1
+                    value: _leaveLocation,
+                    dropdownColor: Colors.white,
+                    isExpanded: true,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _leaveLocation = newValue!;
+                      });
+                    },
+                    items: leave_type.map((location) {
+                      return DropdownMenuItem(
+                        child: new Text(location,style: const TextStyle(
+                          color: Colors.black54,
+                        ),
+                        ),
+                        value: location,
+                      );
+                    }).toList(),
+                  ),
                 ),
               ),
 
               const SizedBox(height: 20.0),
 
               Container(
-                margin: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+                margin: const EdgeInsets.fromLTRB(25,0, 25, 0),
+                decoration: ThemeHelper().inputBoxDecorationShaddow(),
+                child:  Container(
+                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade400,width: 1),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(100)
+                  ),
+                  child: DropdownButton(
+                    underline: SizedBox(height: 0,),
+                    hint: const Text('Single/Multiple *'
+                      ,style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w400
+                      ),
+                    ), // Not necessary for Option 1
+                    value: _leaveName,
+                    dropdownColor: Colors.white,
+                    isExpanded: true,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _leaveName = newValue!;
+                      });
+                    },
+                    items: leave_list.map((location) {
+                      return DropdownMenuItem(
+                        child: new Text(location,style: const TextStyle(
+                          color: Colors.black54,
+                        ),
+                        ),
+                        value: location,
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20.0),
+
+              Container(
+                margin: const EdgeInsets.fromLTRB(25,0, 25, 0),
                 child: Row(
                   children: [
                     Expanded(
@@ -87,7 +165,6 @@ class _AddJourneyPlanerState extends State<AddJourneyPlaner> {
                         decoration: ThemeHelper().inputBoxDecorationShaddow(),
                         child: TextFormField(
                           controller: fromController,
-                          keyboardType: TextInputType.none,
                           onTap: () async {
                             DateTime? pickedDate = await showDatePicker(
                                 context: context,
@@ -98,6 +175,7 @@ class _AddJourneyPlanerState extends State<AddJourneyPlaner> {
                             );
                             if (pickedDate != null) {
                               print(pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+
                               String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
                               print(formattedDate); //formatted date output using intl package =>  2021-03-16
                               setState(() {
@@ -112,18 +190,18 @@ class _AddJourneyPlanerState extends State<AddJourneyPlaner> {
 
                     SizedBox(width: 15,),
 
-                    Expanded(
+                    _leaveName == "Single"?SizedBox.shrink():Expanded(
                       child:  Container(
                         decoration: ThemeHelper().inputBoxDecorationShaddow(),
                         child: TextFormField(
                           controller: toDateController,
                           onTap: () async {
                             DateTime? pickedDate = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime.now(),
-                              //DateTime.now() - not to allow to choose before today.
-                              lastDate: DateTime(2100),
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now(),
+                                //DateTime.now() - not to allow to choose before today.
+                                lastDate: DateTime(2100)
                             );
 
                             if (pickedDate != null) {
@@ -143,71 +221,47 @@ class _AddJourneyPlanerState extends State<AddJourneyPlaner> {
                   ],
                 ),
               ),
+
+
+
+
               const SizedBox(height: 20.0),
 
-
               Container(
-                margin: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+                margin: const EdgeInsets.fromLTRB(25,0, 25, 0),
                 decoration: ThemeHelper().inputBoxDecorationShaddow(),
                 child: TextFormField(
-                  controller: doctorController,
-                  decoration: ThemeHelper().textInputDecoration('Doctor Name *', 'Enter Doctor Name').copyWith(suffixIcon:GestureDetector(
-                    onTap: (){
-                      if(doctorController.text.isNotEmpty){
-                        doctors.add(doctorController.text);
-                        setState(() {
-                        });
-                        doctorController.clear();
-                      }
-                    },
-                      child: Icon(Icons.add)) ),
-
+                  minLines: 4,
+                  maxLines: 5,
+                  keyboardType: TextInputType.multiline,
+                  decoration:  InputDecoration(
+                    hintText: "Reason *",
+                    hintStyle: TextStyle(
+                        color: Colors.grey
+                    ),
+                    fillColor: Colors.white,
+                    filled: true,
+                    contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), borderSide: BorderSide(color: Colors.grey.shade400)),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), borderSide: BorderSide(color: Colors.grey.shade400)),
+                    errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), borderSide: BorderSide(color: Colors.red, width: 2.0)),
+                    focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(100.0), borderSide: BorderSide(color: Colors.red, width: 2.0)),
+                  ),
                 ),
               ),
-              SizedBox(height: 20,),
 
-              Container(
-                height: 140,
-                child: ListView.separated(
-                  itemCount: doctors.length,
-                    itemBuilder: (context,index){
-                  return Container(
-                    margin: EdgeInsets.symmetric(horizontal: 40),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            child: Text(doctors[index],style: const TextStyle(
-                                fontSize: 20,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500
-                            ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: (){
-                              doctors.remove(doctors[index]);
-                              setState(() {
 
-                              });
-                            },
-                              child: Icon(Icons.remove_circle_outline,color: Colors.grey,))
-                        ],
-                      ));
-                }, separatorBuilder: (BuildContext context, int index) {return SizedBox(height: 5,); },),
-              ),
-
-              const SizedBox(height:20.0),
+              const SizedBox(height:50.0),
 
               Container(
                 decoration: ThemeHelper().buttonBoxDecoration(context),
                 child: ElevatedButton(
                   style: ThemeHelper().buttonStyle(),
-                  child: const Padding(
-                    padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(40, 10, 40, 10),
                     child: Text(
                       "Submit",
-                      style:  TextStyle(
+                      style:  const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -226,6 +280,7 @@ class _AddJourneyPlanerState extends State<AddJourneyPlaner> {
                   },
                 ),
               ),
+
             ],
           ),
         ),

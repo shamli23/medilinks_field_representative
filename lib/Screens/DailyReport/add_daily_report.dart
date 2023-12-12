@@ -61,9 +61,61 @@ class _AddDailyReportState extends State<AddDailyReport> {
               alignment: Alignment.center,
               child: Image.asset("assets/images/app_logo.png"),
             ),
-
             SizedBox(height: 50,),
+            GestureDetector(
+              onTap: () {},
+              child: Container(
+                height: 45,
+                width: MediaQuery.of(context).size.width,
+                alignment: Alignment.centerLeft,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.black)
+                ),
+                child: Container(
+                  width: MediaQuery.of(context).size.width / 1.4,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: Colors.white,
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(width: 15,),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        alignment: Alignment.center,
+                        child: Icon(Icons.search,color: Colors.black,size: 23,),
+                        width: 25,
+                        height: 50,
+                      ),
 
+                      Expanded(
+                        child: TextFormField(
+                          //  controller: searchController,
+                          onChanged: (val){
+                            setState(() {});
+                          },
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Search....",
+                              hintStyle: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w500
+                              )
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20.0),
             Container(
               decoration: ThemeHelper().inputBoxDecorationShaddow(),
               child:  Container(
@@ -72,72 +124,80 @@ class _AddDailyReportState extends State<AddDailyReport> {
                 decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey.shade400,width: 1),
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(100)
+                    borderRadius: BorderRadius.circular(10)
                 ),
-                child: DropdownButton(
-                  underline: SizedBox(height: 0,),
-                  hint: const Text('Choose A Hospital*'
-                    ,style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w400
-                    ),
-                  ), // Not necessary for Option 1
-                  value: _hospitalLocation,
-                  dropdownColor: Colors.white,
-                  isExpanded: true,
-                  onChanged: (newValue) {
+                child: TextFormField(
+                  //  controller: searchController,
+                  onChanged: (val){
                     setState(() {});
                   },
-                  items: hospital_list.map((location) {
-                    return DropdownMenuItem(
-                      child: new Text(location,style: const TextStyle(
-                        color: Colors.black54,
-                      ),
-                      ),
-                      value: location,
-                    );
-                  }).toList(),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Hospital Name",
+                      hintStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w500
+                      )
+                  ),
                 ),
               ),
             ),
-
+            const SizedBox(height: 20.0),
+            Container(
+              decoration: ThemeHelper().inputBoxDecorationShaddow(),
+              child:  Container(
+                padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade400,width: 1),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10)
+                ),
+                child: TextFormField(
+                  //  controller: searchController,
+                  onChanged: (val){
+                    setState(() {});
+                  },
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Doctor Name",
+                      hintStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w500
+                      )
+                  ),
+                ),
+              ),
+            ),
             const SizedBox(height: 20.0),
 
             Container(
               decoration: ThemeHelper().inputBoxDecorationShaddow(),
               child:  Container(
                 padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                height: 70,
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey.shade400,width: 1),
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(100)
+                    borderRadius: BorderRadius.circular(10)
                 ),
-                child: DropdownButton(
-                  underline: SizedBox(height: 0,),
-                  hint: const Text('Choose A Doctor*'
-                    ,style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w400
-                    ),
-                  ), // Not necessary for Option 1
-                  value: _doctorLocation,
-                  dropdownColor: Colors.white,
-                  isExpanded: true,
-                  onChanged: (newValue) {
+                child: TextFormField(
+                  //  controller: searchController,
+                  onChanged: (val){
                     setState(() {});
                   },
-                  items: doctor_list.map((location) {
-                    return DropdownMenuItem(
-                      child: new Text(location,style: const TextStyle(
-                        color: Colors.black54,
-                      ),
-                      ),
-                      value: location,
-                    );
-                  }).toList(),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Address",
+                      hintStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w500
+                      )
+                  ),
                 ),
               ),
             ),

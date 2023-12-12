@@ -27,11 +27,11 @@ class LoginUiApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Login UI',
+      title: 'Medilinks Field Representative App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: _primaryColor,
-        accentColor: _accentColor,
+        hintColor: _accentColor,
         scaffoldBackgroundColor: Colors.grey.shade100,
         primarySwatch: Colors.red,
       ),

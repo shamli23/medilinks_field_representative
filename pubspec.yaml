@@ -49,6 +49,8 @@ dependencies:
   intl: ^0.17.0
   http: ^0.13.5
   flutter_easyloading: ^3.0.1
+  syncfusion_flutter_barcodes: ^23.2.7
+  image_gallery_saver: ^2.0.3
 
 
 dev_dependencies:

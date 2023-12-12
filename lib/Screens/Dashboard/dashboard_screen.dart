@@ -132,7 +132,7 @@ class _DashBoardState extends State<DashBoard> {
             BottomNavyBarItem(
               activeColor: Colors.white,
               icon: Container(
-                margin: EdgeInsets.only(left: 10),
+                margin: EdgeInsets.only(left: 5),
                        child: Image.asset("assets/images/delivery_truck.png",height: 30,width: 27,color: Colors.white,)
                  ,),
               title: Text('Pickup'),
@@ -141,7 +141,7 @@ class _DashBoardState extends State<DashBoard> {
             BottomNavyBarItem(
               activeColor: Colors.white,
               icon: Container(
-                margin: EdgeInsets.only(left: 10),
+                margin: EdgeInsets.only(left: 5),
                    child: Image.asset("assets/images/question.png",height: 30,width: 27,color: Colors.white,)
                 ,),
               title: Text('Enquiry'),
@@ -160,7 +160,7 @@ class _DashBoardState extends State<DashBoard> {
             BottomNavyBarItem(
               activeColor: Colors.white,
               icon: Container(
-                margin: EdgeInsets.only(left: 10,top: 3),
+                margin: EdgeInsets.only(left: 5,top: 3),
                   child: Image.asset("assets/images/leave.png",height: 35,width: 27,color: Colors.white,)
                   ,),
               title: Text('Leave App'),
@@ -168,7 +168,7 @@ class _DashBoardState extends State<DashBoard> {
             BottomNavyBarItem(
               activeColor: Colors.white,
               icon: Container(
-                margin: EdgeInsets.only(left: 10),
+                margin: EdgeInsets.only(left: 5),
                 child: Image.asset("assets/images/journey.png",height: 30,width: 27,color: Colors.white,)
                 ,),
               title: Text('Journey Planner'),

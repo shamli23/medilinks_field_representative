@@ -15,8 +15,8 @@ class _AddLeaveFormState extends State<AddLeaveForm> {
   final _formKey = GlobalKey<FormState>();
   bool checkedValue = false;
   bool checkboxValue = false;
-  String? _genderLocation;
-  List<String> gender_list = ["Single","Multiple"];
+  String? _leaveName;
+  List<String> leave_list = ["Single","Multiple"];
   String? _leaveLocation;
   List<String> leave_type = ["Casual Leave","Sick Leave"];
 
@@ -93,8 +93,10 @@ class _AddLeaveFormState extends State<AddLeaveForm> {
                     value: _leaveLocation,
                     dropdownColor: Colors.white,
                     isExpanded: true,
-                    onChanged: (newValue) {
-                      setState(() {});
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _leaveLocation = newValue!;
+                      });
                     },
                     items: leave_type.map((location) {
                       return DropdownMenuItem(
@@ -131,13 +133,16 @@ class _AddLeaveFormState extends State<AddLeaveForm> {
                           fontWeight: FontWeight.w400
                       ),
                     ), // Not necessary for Option 1
-                    value: _genderLocation,
+                    value: _leaveName,
                     dropdownColor: Colors.white,
                     isExpanded: true,
-                    onChanged: (newValue) {
-                      setState(() {});
+                    onChanged: (String? newValue) {
+
+                      setState(() {
+                        _leaveName = newValue;
+                      });
                     },
-                    items: gender_list.map((location) {
+                    items: leave_list.map((location) {
                       return DropdownMenuItem(
                         child: new Text(location,style: const TextStyle(
                           color: Colors.black54,
@@ -186,7 +191,7 @@ class _AddLeaveFormState extends State<AddLeaveForm> {
 
                     SizedBox(width: 15,),
 
-                    Expanded(
+                    _leaveName == "Single"?SizedBox.shrink():Expanded(
                       child:  Container(
                         decoration: ThemeHelper().inputBoxDecorationShaddow(),
                         child: TextFormField(

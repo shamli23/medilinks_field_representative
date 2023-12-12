@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:medilinks_doctor_app/Constants/screennavigation.dart';
 import 'package:medilinks_doctor_app/Screens/Enquiry/add_enquiry.dart';
+import 'package:medilinks_doctor_app/Screens/Enquiry/edit_enquiry.dart';
 import 'package:medilinks_doctor_app/Screens/Profile/profile_screen.dart';
 
 
@@ -133,103 +134,118 @@ class _EnquiryScreenState extends State<EnquiryScreen> {
                   shrinkWrap: true,
                   itemCount: list.length,
                   itemBuilder: (context, index) {
-                    return Column(
-                      children: [
+                    return GestureDetector(
+                      onTap: (){
+                        pushTo(context, EditEnquiry());
+                      },
+                      child: Column(
+                        children: [
 
 
-                        Container(
-                          margin: const EdgeInsets.only(left: 20,right: 20,bottom: 10, top: 10),
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.blueGrey[100]!,
-                                spreadRadius: 1,
-                                blurRadius: 7,
-                                offset: const Offset(0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-
-                              const SizedBox(width: 5,),
-
-                              Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      child: Text(list[index].doctorName.toString(),style: const TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w500
-                                       ),
-                                      ),
-                                     ),
-                                    const SizedBox(height: 3,),
-                                    Container(
-                                      child: Text(list[index].testName.toString(),style: const TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.black87,
-                                          fontWeight: FontWeight.w400
-                                       ),
-                                      ),
-                                     ),
-                                    const SizedBox(height: 3,),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Container(
-                                            child: Text(list[index].source.toString(),style: const TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.black87,
-                                                fontWeight: FontWeight.w400
-                                            ),
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                              color: HexColor("#fc7598"),
-                                              borderRadius: BorderRadius.circular(8)
-                                          ),
-                                          padding: const EdgeInsets.only(bottom: 5,left: 5,right: 5, top: 4),
-                                          height: 25,
-                                          width: 120,
-                                          alignment: Alignment.center,
-                                          child: Text(list[index].city.toString(),style: const TextStyle(
-                                            fontSize: 15,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 3,),
-                                    Container(
-                                      child: Text(list[index].date.toString(),style: const TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.black87,
-                                          fontWeight: FontWeight.w400
-                                      ),
-                                      ),
-                                    ),
-                                  ],
+                          Container(
+                            margin: const EdgeInsets.only(left: 20,right: 20,bottom: 10, top: 10),
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.blueGrey[100]!,
+                                  spreadRadius: 1,
+                                  blurRadius: 7,
+                                  offset: const Offset(0, 3), // changes position of shadow
                                 ),
-                              ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
 
-                              const SizedBox(width: 5,),
-                            ],
+                                const SizedBox(width: 5,),
+
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        child: Text(list[index].doctorName.toString(),style: const TextStyle(
+                                            fontSize: 20,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w500
+                                         ),
+                                        ),
+                                       ),
+                                      const SizedBox(height: 3,),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Container(
+                                              child: Text(list[index].testName.toString(),style: const TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.black87,
+                                                  fontWeight: FontWeight.w400
+                                               ),
+                                              ),
+                                             ),
+                                          ),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                color: HexColor("#fc7598"),
+                                                borderRadius: BorderRadius.circular(8)
+                                            ),
+                                            padding: const EdgeInsets.only(bottom: 5,left: 5,right: 5, top: 4),
+                                            height: 25,
+                                            width: 120,
+                                            alignment: Alignment.center,
+                                            child: Text(list[index].city.toString(),style: const TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 3,),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Container(
+                                              child: Text(list[index].source.toString(),style: const TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.black87,
+                                                  fontWeight: FontWeight.w400
+                                              ),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding:EdgeInsets.only(right: 17),
+                                            child: Container(
+                                              child: Text(list[index].date.toString(),style: const TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.black87,
+                                                  fontWeight: FontWeight.w400
+                                              ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 3,),
+
+                                    ],
+                                  ),
+                                ),
+
+                                const SizedBox(width: 5,),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     );
                   }
               ),
