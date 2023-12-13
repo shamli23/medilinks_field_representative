@@ -3,7 +3,9 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:medilinks_doctor_app/Constants/screennavigation.dart';
 import 'package:medilinks_doctor_app/Screens/LeaveApp/add_leave_app_form.dart';
 import 'package:medilinks_doctor_app/Screens/LeaveApp/edit_leave_form.dart';
-import 'package:medilinks_doctor_app/Screens/Profile/profile_screen.dart';
+import 'package:medilinks_doctor_app/models/leave_list_response.dart';
+import '../../Constants/const_files.dart';
+import '../../repository/api_repo.dart';
 
 //  Confirmed Pending
 
@@ -15,27 +17,73 @@ class LeaveApp extends StatefulWidget {
 }
 
 class _LeaveAppState extends State<LeaveApp> {
-  List<PatientModel> list = [];
-  int showEdit = 0;
-  int editIndex = 0;
+  List<Leaves> leaveList = [];
+  List<Leaves> searchLeaveList = [];
+  bool isSearching = false;
+  var searchController = TextEditingController();
+
 
   @override
   void initState() {
 
-    PatientModel patientModel1 = new PatientModel(leaveType: "Single", startDate: "04-05-2023",endDate: "04-05-2023",status: "Confirmed",typeOfLeave : "Sick Leave");
-    list.add(patientModel1);
-
-    PatientModel patientModel2 = new PatientModel(leaveType: "Single", startDate: "04-05-2023",endDate: "04-05-2023",status: "Pending",typeOfLeave : "Casual Leave");
-    list.add(patientModel2);
-
-    PatientModel patientModel3 = new PatientModel(leaveType: "Multiple", startDate: "04-07-2023",endDate: "08-07-2023",status: "Confirmed",typeOfLeave : "Sick Leave");
-    list.add(patientModel3);
-
-    PatientModel patientModel4 = new PatientModel(leaveType: "Multiple", startDate: "02-08-2023",endDate: "04-08-2023",status: "Pending",typeOfLeave : "Casual Leave");
-    list.add(patientModel4);
+    fetchLeaveList();
 
     super.initState();
   }
+
+  _onChangeHandler(value )
+  {
+    if(value.isNotEmpty){
+      isSearching = true;
+      searchLeaveList.clear();
+      setState(() {
+      });
+      fetchSearchLeaveList(value);
+    }else{
+      isSearching = false;
+      searchLeaveList.clear();
+      setState(() {
+      });
+    }
+  }
+
+  fetchSearchLeaveList(String query)async{
+    Map<String, String> params = new Map<String, String>();
+    params["query"] = query;
+    searchLeaveList.clear();
+    var response = await ApiRepo().searchLeave(context, params);
+    if(response.leaves != null){
+      searchLeaveList.clear();
+      setState(() {
+
+      });
+      for(var data in response.leaves!){
+        setState(() {
+          searchLeaveList.add(data);
+        });
+      }
+    }
+
+  }
+
+
+  fetchLeaveList()async{
+    Future.delayed(Duration.zero, () {
+      showLoader(context);
+    });
+    var response = await ApiRepo().getLeaveList();
+
+    if(response!=null){
+      for(var data in response.leaves!){
+        leaveList.add(data);
+        setState(() {
+
+        });
+      }
+      Navigator.pop(context);
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -70,9 +118,6 @@ class _LeaveAppState extends State<LeaveApp> {
       ),
       body: GestureDetector(
         onTap: (){
-          showEdit = 0;
-          editIndex = 0;
-          setState(() {});
         },
         child: Container(
           height: size.height,
@@ -116,10 +161,8 @@ class _LeaveAppState extends State<LeaveApp> {
 
                         Expanded(
                           child: TextFormField(
-                            //  controller: searchController,
-                            onChanged: (val){
-                              setState(() {});
-                            },
+                          controller: searchController,
+                            onChanged: _onChangeHandler,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Search....",
@@ -139,121 +182,123 @@ class _LeaveAppState extends State<LeaveApp> {
 
               SizedBox(height: 20,),
 
-              ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: list.length,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: (){
-                        pushTo(context, EditLeaveForm());
-                      },
-                      child: Column(
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.only(left: 20,right: 20,bottom: 10, top: 10),
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.blueGrey[100]!,
-                                  spreadRadius: 1,
-                                  blurRadius: 7,
-                                  offset: const Offset(0, 3), // changes position of shadow
+              (isSearching?searchLeaveList.isNotEmpty:leaveList.isNotEmpty)?Flexible(
+                child: RefreshIndicator(
+                  onRefresh: (){
+                    return Future.delayed(Duration(seconds: 1),
+                            (){leaveList.clear();
+                        fetchLeaveList();
+                        }
+                    );
+                  },
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: isSearching?searchLeaveList.length:leaveList.length,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: (){
+                            pushTo(context, EditLeaveForm(isSearching?searchLeaveList[index]:leaveList[index]));
+                          },
+                          child: Column(
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(left: 20,right: 20,bottom: 10, top: 10),
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.blueGrey[100]!,
+                                      spreadRadius: 1,
+                                      blurRadius: 7,
+                                      offset: const Offset(0, 3), // changes position of shadow
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
 
-                                const SizedBox(width: 3,),
+                                    const SizedBox(width: 3,),
 
-                                Expanded(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        child: Text(list[index].leaveType.toString(),style: const TextStyle(
-                                            fontSize: 20,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w500
-                                           ),
-                                         ),
-                                       ),
-                                      const SizedBox(height: 5,),
-                                      Container(
-                                        child: Text('${list[index].startDate} To ${list[index].endDate.toString()}',style: const TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.black87,
-                                            fontWeight: FontWeight.w400
-                                         ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 5,),
-                                      Row(
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Expanded(
-                                            child: Container(
-                                              child: Text(list[index].typeOfLeave.toString(),style: const TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.black87,
-                                                  fontWeight: FontWeight.w400
-                                               ),
-                                              ),
-                                             ),
-                                            ),
-
                                           Container(
-                                            padding: const EdgeInsets.only(bottom: 0,left: 5,right: 5, top: 0),
-                                            height: 25,
-                                            width: 120,
-                                            decoration: BoxDecoration(
-                                                color: HexColor("#fc7598"),
-                                                borderRadius: BorderRadius.circular(8)
-                                            ),
-                                            child: Text(list[index].status.toString(),style: const TextStyle(
+                                            child: Text(isSearching?searchLeaveList[index].typeOfLeave.toString():leaveList[index].typeOfLeave.toString(),style: const TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w500
+                                               ),
+                                             ),
+                                           ),
+                                          const SizedBox(height: 5,),
+                                          Container(
+                                            child:( isSearching?searchLeaveList[index].oneDayDate== null:leaveList[index].oneDayDate == null)?Text('${isSearching?searchLeaveList[index].fromDate:leaveList[index].fromDate} To ${isSearching?searchLeaveList[index].toDate:leaveList[index].toDate.toString()}',style: const TextStyle(
                                                 fontSize: 16,
-                                                color: Colors.white,
+                                                color: Colors.black87,
+                                                fontWeight: FontWeight.w400
+                                             ),
+                                            ):Text('${isSearching?searchLeaveList[index].oneDayDate:leaveList[index].oneDayDate}',style: const TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.black87,
                                                 fontWeight: FontWeight.w400
                                             ),
                                             ),
-                                            alignment: Alignment.center,
                                           ),
-                                           ],
-                                          ),
-                                         ],
-                                       ),
-                                     ),
-                                    ],
-                            ),
+                                          const SizedBox(height: 5,),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Container(
+                                                  child: Text(isSearching?searchLeaveList[index].typeOfLeave.toString():leaveList[index].typeOfLeave.toString(),style: const TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.black87,
+                                                      fontWeight: FontWeight.w400
+                                                   ),
+                                                  ),
+                                                 ),
+                                                ),
+
+                                              Container(
+                                                padding: const EdgeInsets.only(bottom: 0,left: 5,right: 5, top: 0),
+                                                height: 25,
+                                                width: 120,
+                                                decoration: BoxDecoration(
+                                                    color: HexColor("#fc7598"),
+                                                    borderRadius: BorderRadius.circular(8)
+                                                ),
+                                                child: Text(isSearching?searchLeaveList[index].status.toString():leaveList[index].status.toString(),style: const TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w400
+                                                ),
+                                                ),
+                                                alignment: Alignment.center,
+                                              ),
+                                               ],
+                                              ),
+                                             ],
+                                           ),
+                                         ),
+                                        ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    );
-                  }
-              ),
-              const SizedBox(height: 60,),
+                        );
+                      }
+                  ),
+                ),
+              ):SizedBox.shrink(),
             ],
           ),
         ),
       ),
     );
   }
-}
-
-
-
-class PatientModel {
-  String? leaveType;
-  String? startDate;
-  String? endDate;
-  String? status;
-  String? remark;
-  String? typeOfLeave;
-
-  PatientModel({this.leaveType, this.startDate, this.endDate, this.status, this.remark,this.typeOfLeave});
 }

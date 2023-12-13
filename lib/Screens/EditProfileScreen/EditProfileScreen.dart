@@ -21,7 +21,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String? _experienceLocation;
   List<String> experience_list = ["0","1+","2+","3+", "4+","5+"];
   String? _genderLocation;
-  List<String> gender_list = ["Male","Female","Transgender"];
+  List<String> gender_list = ["Male","Female"];
   String? _specialisationLocation;
   List<String> specialisation_list = ["Orthopedics","Internal Medicine","Obstetrics and Gynecology"];
 

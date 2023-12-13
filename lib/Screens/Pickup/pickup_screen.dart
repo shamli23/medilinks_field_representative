@@ -1,9 +1,16 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:intl/intl.dart';
 import 'package:medilinks_doctor_app/Constants/screennavigation.dart';
 import 'package:medilinks_doctor_app/Screens/Notification/notifications.dart';
 import 'package:medilinks_doctor_app/Screens/Pickup/pickup_details_screen.dart';
 import 'package:medilinks_doctor_app/Screens/Profile/profile_screen.dart';
+import 'package:medilinks_doctor_app/models/pickup_list_response.dart';
+import 'package:medilinks_doctor_app/repository/api_repo.dart';
+
+import '../../Constants/const_files.dart';
 
 
 class PickupScreen extends StatefulWidget {
@@ -14,29 +21,90 @@ class PickupScreen extends StatefulWidget {
 }
 
 class _PickupScreenState extends State<PickupScreen> {
-  List<PatientModel> list = [];
   var _searchText = TextEditingController();
+
+  List<PickupData> pickupData = [];
+  List<PickupData> collectedData = [];
+  List<PickupData> searchPickupData = [];
+  List<PickupData> searchCollectedData = [];
+  bool isSearching = false;
+
+  fetchPickupList()async{
+    Future.delayed(Duration.zero, () {
+      showLoader(context);
+    });
+   var response = await ApiRepo().getPickupList();
+
+   if(response!=null){
+     for(var data in response.data!){
+       pickupData.add(data);
+       setState(() {
+
+       });
+     }
+     Navigator.pop(context);
+   }
+  }
+
+  fetchCollectedList()async{
+    Future.delayed(Duration.zero, () {
+      showLoader(context);
+    });
+   var response = await ApiRepo().getCollectedList();
+
+   if(response!=null){
+     for(var data in response.data!){
+       collectedData.add(data);
+       setState(() {
+
+       });
+     }
+     Navigator.pop(context);
+   }
+  }
 
   @override
   void initState() {
 
-    PatientModel patientModel1 = new PatientModel(patientName: "Patient Name", date: "04-05-2023",caseHistory: "Mumbai",status: "Booked Test");
-    list.add(patientModel1);
-
-    PatientModel patientModel2 = new PatientModel(patientName: "Patient Name", date: "04-05-2023",caseHistory: "Mumbai",status: "In Transit");
-    list.add(patientModel2);
-
-    PatientModel patientModel3 = new PatientModel(patientName: "Patient Name", date: "04-05-2023",caseHistory: "Mumbai",status: "Sample Collected");
-    list.add(patientModel3);
-
-    PatientModel patientModel4 = new PatientModel(patientName: "Patient Name", date: "04-05-2023",caseHistory: "Mumbai",status: "Download Report");
-    list.add(patientModel4);
+    fetchPickupList();
+    fetchCollectedList();
 
     super.initState();
   }
 
   _onChangeHandler(value )
   {
+    if(value.isNotEmpty){
+      isSearching = true;
+      searchPickupData.clear();
+      setState(() {
+      });
+      searchPickupSamples(value);
+    }else{
+      isSearching = false;
+      searchPickupData.clear();
+      setState(() {
+      });
+    }
+  }
+
+  searchPickupSamples(String query)async{
+    Map<String, String> params = new Map<String, String>();
+    params["query"] = query;
+    searchPickupData.clear();
+    var response = await ApiRepo().searchPickupSamples(context, params);
+    if(response.data != null){
+      searchPickupData.clear();
+      setState(() {
+
+      });
+      for(var data in response.data!){
+        setState(() {
+          searchPickupData.add(data);
+        });
+      }
+    }
+
   }
 
   @override
@@ -133,6 +201,7 @@ class _PickupScreenState extends State<PickupScreen> {
                         Expanded(
                           child: TextFormField(
                             controller: _searchText,
+
                             onChanged: _onChangeHandler,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
@@ -155,459 +224,481 @@ class _PickupScreenState extends State<PickupScreen> {
             ],
           ),
           toolbarHeight: 130,
-          bottom: TabBar(tabs: [
+          bottom: TabBar(
+            indicatorColor: Colors.white,
+              tabs: [
             Tab(text: "Pickup",),
             Tab(text: "Collected",),
           ]),
         ),
         body: TabBarView(
           children: [
-            Container(
-              height: size.height,
-              color: Colors.white,
-              margin: const EdgeInsets.only(top: 10),
-              child: Stack(
-                children: <Widget>[
+            RefreshIndicator(
+              onRefresh: (){
+                return Future.delayed(Duration(seconds: 1),
+                        (){
+                  pickupData.clear();
+                    fetchPickupList();
+                    }
+                );
+              },
+              child: Container(
+                height: size.height,
+                color: Colors.white,
+                margin: const EdgeInsets.only(top: 10),
+                child: Stack(
+                  children: <Widget>[
 
-                  ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: list.length,
-                      itemBuilder: (context, index) {
-                        if(index == 0)
-                        {
-                          return GestureDetector(
-                            onTap: (){
-                              pushTo(context, const PickupsDetailsScreen());
-                            },
-                            child: Column(
-                              children: [
-
-                                const SizedBox(height: 15,),
-
-                                Container(
-                                  width: size.width,
-                                  alignment: Alignment.centerLeft,
-                                  margin: const EdgeInsets.only(left: 30),
-                                  child: const Text("Your Pickups", style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black
-                                  ),
-                                  ),
-                                ),
-
-
-                                Container(
-                                  margin: const EdgeInsets.only(left: 20,right: 20,bottom: 10, top: 10),
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.blueGrey[100]!,
-                                        spreadRadius: 1,
-                                        blurRadius: 7,
-                                        offset: const Offset(0, 3), // changes position of shadow
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-
-                                      const SizedBox(width: 5,),
-
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              child: Text(list[index].patientName.toString(),style: const TextStyle(
-                                                  fontSize: 20,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w500
-                                              ),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 3,),
-                                            Container(
-                                              child: Text(list[index].caseHistory.toString(),style: const TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.black87,
-                                                  fontWeight: FontWeight.w400
-                                              ),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 3,),
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Container(
-                                                    child: Text(list[index].date.toString(),style: const TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.black87,
-                                                        fontWeight: FontWeight.w400
-                                                    ),
-                                                    ),
-                                                  ),
-                                                ),
-
-                                                Container(
-                                                  child: Text(list[index].status.toString(),style: TextStyle(
-                                                    fontSize: 15,
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                      color: HexColor("#fc7598"),
-                                                      borderRadius: BorderRadius.circular(8)
-                                                  ),
-                                                  padding: EdgeInsets.only(bottom: 5,left: 5,right: 5, top: 4),
-                                                  height: 25,
-                                                  width: 150,
-                                                  alignment: Alignment.center,
-
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-
-                                      const SizedBox(width: 5,),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-                        else
-                        {
-                          return GestureDetector(
-                            onTap: (){
-                              pushTo(context, const PickupsDetailsScreen());
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.only(left: 20,right: 20,bottom: 10, top: 10),
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.blueGrey[100]!,
-                                    spreadRadius: 1,
-                                    blurRadius: 7,
-                                    offset: const Offset(0, 3), // changes position of shadow
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                    (isSearching?searchPickupData.isNotEmpty:pickupData.isNotEmpty)?ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: isSearching?searchPickupData.length:pickupData.length,
+                        itemBuilder: (context, index) {
+                          if(index == 0)
+                          {
+                            return GestureDetector(
+                              onTap: (){
+                                pushTo(context,  PickupsDetailsScreen(isSearching?searchPickupData[index]:pickupData[index]));
+                              },
+                              child: Column(
                                 children: [
 
-                                  const SizedBox(width: 5,),
+                                  const SizedBox(height: 15,),
 
-                                  Expanded(
-                                    child: Column(
+                                  Container(
+                                    width: size.width,
+                                    alignment: Alignment.centerLeft,
+                                    margin: const EdgeInsets.only(left: 30),
+                                    child: const Text("Your Pickups", style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black
+                                    ),
+                                    ),
+                                  ),
+
+
+                                  Container(
+                                    margin: const EdgeInsets.only(left: 20,right: 20,bottom: 10, top: 10),
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(20),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.blueGrey[100]!,
+                                          spreadRadius: 1,
+                                          blurRadius: 7,
+                                          offset: const Offset(0, 3), // changes position of shadow
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Container(
-                                          child: Text(list[index].patientName.toString(),style: const TextStyle(
-                                              fontSize: 20,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w500
-                                          ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 3,),
-                                        Container(
-                                          child: Text(list[index].caseHistory.toString(),style: const TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.black87,
-                                              fontWeight: FontWeight.w400
-                                          ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 3,),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: Container(
-                                                child: Text(list[index].date.toString(),style: const TextStyle(
+
+                                        const SizedBox(width: 5,),
+
+                                        Expanded(
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                child: Text(isSearching?searchPickupData[index].name.toString():pickupData[index].name.toString(),style: const TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.w500
+                                                ),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 3,),
+                                              Container(
+                                                child: Text(isSearching?searchPickupData[index].streetAddressCity.toString():pickupData[index].streetAddressCity.toString(),style: const TextStyle(
                                                     fontSize: 16,
                                                     color: Colors.black87,
                                                     fontWeight: FontWeight.w400
                                                 ),
                                                 ),
                                               ),
-                                            ),
+                                              const SizedBox(height: 3,),
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Container(
+                                                      child: Text(DateFormat('dd-MM-yyyy').format(DateTime.parse(isSearching?searchPickupData[index].createdAt.toString():pickupData[index].createdAt??"")).toString(),style: const TextStyle(
+                                                          fontSize: 16,
+                                                          color: Colors.black87,
+                                                          fontWeight: FontWeight.w400
+                                                      ),
+                                                      ),
+                                                    ),
+                                                  ),
 
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                  color: HexColor("#fc7598"),
-                                                  borderRadius: BorderRadius.circular(8)
-                                              ),
-                                              padding: const EdgeInsets.only(bottom: 5,left: 5,right: 5, top: 4),
-                                              height: 25,
-                                              width: 150,
-                                              alignment: Alignment.center,
-                                              child: Text(list[index].status.toString(),style: const TextStyle(
-                                                fontSize: 15,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                              ),
+                                                  Container(
+                                                    child: Text(isSearching?searchPickupData[index].sampleStatus.toString():pickupData[index].sampleStatus.toString(),style: TextStyle(
+                                                      fontSize: 15,
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.w500,
+                                                    ),
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                        color: HexColor("#fc7598"),
+                                                        borderRadius: BorderRadius.circular(8)
+                                                    ),
+                                                    padding: EdgeInsets.only(bottom: 5,left: 5,right: 5, top: 4),
+                                                    height: 25,
+                                                    width: 150,
+                                                    alignment: Alignment.center,
 
-                                            ),
-
-                                          ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
+
+                                        const SizedBox(width: 5,),
                                       ],
                                     ),
                                   ),
-
-                                  const SizedBox(width: 5,),
                                 ],
                               ),
-                            ),
-                          );
+                            );
+                          }
+                          else
+                          {
+                            return GestureDetector(
+                              onTap: (){
+                                pushTo(context,  PickupsDetailsScreen(isSearching?searchPickupData[index]:pickupData[index]));
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.only(left: 20,right: 20,bottom: 10, top: 10),
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.blueGrey[100]!,
+                                      spreadRadius: 1,
+                                      blurRadius: 7,
+                                      offset: const Offset(0, 3), // changes position of shadow
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+
+                                    const SizedBox(width: 5,),
+
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            child: Text(isSearching?searchPickupData[index].name.toString():pickupData[index].name.toString(),style: const TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w500
+                                            ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 3,),
+                                          Container(
+                                            child: Text(isSearching?searchPickupData[index].streetAddressCity.toString():pickupData[index].streetAddressCity.toString(),style: const TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.black87,
+                                                fontWeight: FontWeight.w400
+                                            ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 3,),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Container(
+                                                  child: Text(DateFormat('dd-MM-yyyy').format(DateTime.parse(isSearching?searchPickupData[index].createdAt.toString():pickupData[index].createdAt??"")).toString(),style: const TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.black87,
+                                                      fontWeight: FontWeight.w400
+                                                  ),
+                                                  ),
+                                                ),
+                                              ),
+
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                    color: HexColor("#fc7598"),
+                                                    borderRadius: BorderRadius.circular(8)
+                                                ),
+                                                padding: const EdgeInsets.only(bottom: 5,left: 5,right: 5, top: 4),
+                                                height: 25,
+                                                width: 150,
+                                                alignment: Alignment.center,
+                                                child: Text(isSearching?searchPickupData[index].sampleStatus.toString():pickupData[index].sampleStatus.toString(),style: const TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                                ),
+
+                                              ),
+
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    const SizedBox(width: 5,),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
                         }
-                      }
-                  ),
-                  const SizedBox(height: 60,),
-                ],
+                    ):SizedBox.shrink(),
+                    const SizedBox(height: 60,),
+                  ],
+                ),
               ),
             ),
-            Container(
-              height: size.height,
-              color: Colors.white,
-              margin: const EdgeInsets.only(top: 10),
-              child: Stack(
-                children: <Widget>[
+            RefreshIndicator(
+              onRefresh: (){
+                return Future.delayed(Duration(seconds: 1),
+                        (){
+                      collectedData.clear();
+                      fetchCollectedList();
+                    }
+                );
+              },
+              child: Container(
+                height: size.height,
+                color: Colors.white,
+                margin: const EdgeInsets.only(top: 10),
+                child: Stack(
+                  children: <Widget>[
 
-                  ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: list.length,
-                      itemBuilder: (context, index) {
-                        if(index == 0)
-                        {
-                          return GestureDetector(
-                            onTap: (){
-                              pushTo(context, const PickupsDetailsScreen());
-                            },
-                            child: Column(
-                              children: [
-
-                                const SizedBox(height: 15,),
-
-                                Container(
-                                  width: size.width,
-                                  alignment: Alignment.centerLeft,
-                                  margin: const EdgeInsets.only(left: 30),
-                                  child: const Text("Collected Samples", style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black
-                                  ),
-                                  ),
-                                ),
-
-
-                                Container(
-                                  margin: const EdgeInsets.only(left: 20,right: 20,bottom: 10, top: 10),
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.blueGrey[100]!,
-                                        spreadRadius: 1,
-                                        blurRadius: 7,
-                                        offset: const Offset(0, 3), // changes position of shadow
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-
-                                      const SizedBox(width: 5,),
-
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              child: Text(list[index].patientName.toString(),style: const TextStyle(
-                                                  fontSize: 20,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w500
-                                              ),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 3,),
-                                            Container(
-                                              child: Text(list[index].caseHistory.toString(),style: const TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.black87,
-                                                  fontWeight: FontWeight.w400
-                                              ),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 3,),
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Container(
-                                                    child: Text(list[index].date.toString(),style: const TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.black87,
-                                                        fontWeight: FontWeight.w400
-                                                    ),
-                                                    ),
-                                                  ),
-                                                ),
-
-                                                Container(
-                                                  child: Text(list[index].status.toString(),style: TextStyle(
-                                                    fontSize: 15,
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                      color: HexColor("#fc7598"),
-                                                      borderRadius: BorderRadius.circular(8)
-                                                  ),
-                                                  padding: EdgeInsets.only(bottom: 5,left: 5,right: 5, top: 4),
-                                                  height: 25,
-                                                  width: 150,
-                                                  alignment: Alignment.center,
-
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-
-                                      const SizedBox(width: 5,),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-                        else
-                        {
-                          return GestureDetector(
-                            onTap: (){
-                              pushTo(context, const PickupsDetailsScreen());
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.only(left: 20,right: 20,bottom: 10, top: 10),
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.blueGrey[100]!,
-                                    spreadRadius: 1,
-                                    blurRadius: 7,
-                                    offset: const Offset(0, 3), // changes position of shadow
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                    collectedData.isNotEmpty?ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: collectedData.length,
+                        itemBuilder: (context, index) {
+                          if(index == 0)
+                          {
+                            return GestureDetector(
+                              onTap: (){
+                                pushTo(context,  PickupsDetailsScreen(collectedData[index]));
+                              },
+                              child: Column(
                                 children: [
 
-                                  const SizedBox(width: 5,),
+                                  const SizedBox(height: 15,),
 
-                                  Expanded(
-                                    child: Column(
+                                  Container(
+                                    width: size.width,
+                                    alignment: Alignment.centerLeft,
+                                    margin: const EdgeInsets.only(left: 30),
+                                    child: const Text("Collected Samples", style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black
+                                    ),
+                                    ),
+                                  ),
+
+
+                                  Container(
+                                    margin: const EdgeInsets.only(left: 20,right: 20,bottom: 10, top: 10),
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(20),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.blueGrey[100]!,
+                                          spreadRadius: 1,
+                                          blurRadius: 7,
+                                          offset: const Offset(0, 3), // changes position of shadow
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Container(
-                                          child: Text(list[index].patientName.toString(),style: const TextStyle(
-                                              fontSize: 20,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w500
-                                          ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 3,),
-                                        Container(
-                                          child: Text(list[index].caseHistory.toString(),style: const TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.black87,
-                                              fontWeight: FontWeight.w400
-                                          ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 3,),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: Container(
-                                                child: Text(list[index].date.toString(),style: const TextStyle(
+
+                                        const SizedBox(width: 5,),
+
+                                        Expanded(
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                child: Text(collectedData[index].name.toString(),style: const TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.w500
+                                                ),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 3,),
+                                              Container(
+                                                child: Text(collectedData[index].streetAddressCity.toString(),style: const TextStyle(
                                                     fontSize: 16,
                                                     color: Colors.black87,
                                                     fontWeight: FontWeight.w400
                                                 ),
                                                 ),
                                               ),
-                                            ),
+                                              const SizedBox(height: 3,),
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Container(
+                                                      child: Text(DateFormat('dd-MM-yyyy').format(DateTime.parse(collectedData[index].createdAt??"")).toString(),style: const TextStyle(
+                                                          fontSize: 16,
+                                                          color: Colors.black87,
+                                                          fontWeight: FontWeight.w400
+                                                      ),
+                                                      ),
+                                                    ),
+                                                  ),
 
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                  color: HexColor("#fc7598"),
-                                                  borderRadius: BorderRadius.circular(8)
-                                              ),
-                                              padding: const EdgeInsets.only(bottom: 5,left: 5,right: 5, top: 4),
-                                              height: 25,
-                                              width: 150,
-                                              alignment: Alignment.center,
-                                              child: Text(list[index].status.toString(),style: const TextStyle(
-                                                fontSize: 15,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                              ),
+                                                  Container(
+                                                    child: Text(collectedData[index].sampleStatus.toString(),style: TextStyle(
+                                                      fontSize: 15,
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.w500,
+                                                    ),
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                        color: HexColor("#fc7598"),
+                                                        borderRadius: BorderRadius.circular(8)
+                                                    ),
+                                                    padding: EdgeInsets.only(bottom: 5,left: 5,right: 5, top: 4),
+                                                    height: 25,
+                                                    width: 150,
+                                                    alignment: Alignment.center,
 
-                                            ),
-
-                                          ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
+
+                                        const SizedBox(width: 5,),
                                       ],
                                     ),
                                   ),
-
-                                  const SizedBox(width: 5,),
                                 ],
                               ),
-                            ),
-                          );
+                            );
+                          }
+                          else
+                          {
+                            return GestureDetector(
+                              onTap: (){
+                                pushTo(context,  PickupsDetailsScreen(collectedData[index]));
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.only(left: 20,right: 20,bottom: 10, top: 10),
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.blueGrey[100]!,
+                                      spreadRadius: 1,
+                                      blurRadius: 7,
+                                      offset: const Offset(0, 3), // changes position of shadow
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+
+                                    const SizedBox(width: 5,),
+
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            child: Text(collectedData[index].name.toString(),style: const TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w500
+                                            ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 3,),
+                                          Container(
+                                            child: Text(collectedData[index].streetAddressCity.toString(),style: const TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.black87,
+                                                fontWeight: FontWeight.w400
+                                            ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 3,),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Container(
+                                                  child: Text(DateFormat('dd-MM-yyyy').format(DateTime.parse(collectedData[index].createdAt??"")).toString(),style: const TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.black87,
+                                                      fontWeight: FontWeight.w400
+                                                  ),
+                                                  ),
+                                                ),
+                                              ),
+
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                    color: HexColor("#fc7598"),
+                                                    borderRadius: BorderRadius.circular(8)
+                                                ),
+                                                padding: const EdgeInsets.only(bottom: 5,left: 5,right: 5, top: 4),
+                                                height: 25,
+                                                width: 150,
+                                                alignment: Alignment.center,
+                                                child: Text(collectedData[index].sampleStatus.toString(),style: const TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                                ),
+
+                                              ),
+
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    const SizedBox(width: 5,),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
                         }
-                      }
-                  ),
-                  const SizedBox(height: 60,),
-                ],
+                    ):SizedBox.shrink(),
+                    const SizedBox(height: 60,),
+                  ],
+                ),
               ),
             )
           ],
@@ -615,15 +706,4 @@ class _PickupScreenState extends State<PickupScreen> {
       ),
     );
   }
-}
-
-
-
-class PatientModel {
-  String? patientName;
-  String? date;
-  String? caseHistory;
-  String? status;
-
-  PatientModel({this.patientName, this.date, this.caseHistory, this.status});
 }

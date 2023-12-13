@@ -3,14 +3,14 @@ import 'package:intl/intl.dart';
 import 'package:medilinks_doctor_app/Constants/const_files.dart';
 import 'package:medilinks_doctor_app/common/theme_helper.dart';
 
-class AddJourneyPlaner extends StatefulWidget {
-  const AddJourneyPlaner({Key? key}) : super(key: key);
+class EditJourneyPlaner extends StatefulWidget {
+  const EditJourneyPlaner({Key? key}) : super(key: key);
 
   @override
-  State<AddJourneyPlaner> createState() => _AddJourneyPlanerState();
+  State<EditJourneyPlaner> createState() => _EditJourneyPlaner();
 }
 
-class _AddJourneyPlanerState extends State<AddJourneyPlaner> {
+class _EditJourneyPlaner extends State<EditJourneyPlaner> {
   final _formKey = GlobalKey<FormState>();
   bool checkedValue = false;
   bool checkboxValue = false;
@@ -162,7 +162,7 @@ class _AddJourneyPlanerState extends State<AddJourneyPlaner> {
                   margin: EdgeInsets.only(right: 20),
                   decoration: ThemeHelper().buttonBoxDecoration(context),
                   child: ElevatedButton(
-                      style: ThemeHelper().buttonStyle(),
+                    style: ThemeHelper().buttonStyle(),
                       onPressed: (){
                         if(doctorController.text.isNotEmpty){
                           doctors.add(doctorController.text);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:medilinks_doctor_app/Screens/Splash/splash_screen.dart';
 
@@ -36,6 +37,7 @@ class LoginUiApp extends StatelessWidget {
         primarySwatch: Colors.red,
       ),
       home: SplashScreen(),
+        builder : EasyLoading.init()
     );
   }
 }

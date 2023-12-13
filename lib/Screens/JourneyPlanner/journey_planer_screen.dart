@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:medilinks_doctor_app/Constants/screennavigation.dart';
 import 'package:medilinks_doctor_app/Screens/JourneyPlanner/add_journey_planer.dart';
+import 'package:medilinks_doctor_app/Screens/JourneyPlanner/edit_journey_palnner.dart';
 import 'package:medilinks_doctor_app/Screens/Profile/profile_screen.dart';
+import 'package:search_map_location/search_map_location.dart';
+import 'package:search_map_location/utils/google_search/place.dart';
 
 class JourneyPlannerScreen extends StatefulWidget {
   const JourneyPlannerScreen({Key? key}) : super(key: key);
@@ -16,16 +19,17 @@ class _JourneyPlannerScreenState extends State<JourneyPlannerScreen> {
   @override
   void initState() {
 
-    PatientModel patientModel1 = new PatientModel(doctorName: "Doctor Name", date: "04-05-2023 To 06-05-2023",city: "Mumbai",source: "Source",testName: "Thyroid panel");
+    PatientModel patientModel1 = new PatientModel(meetings: 10, date: "04-05-2023 To 06-05-2023",city: "Mumbai",source: "Source",testName: "Thyroid panel");
     list.add(patientModel1);
 
-    PatientModel patientModel2 = new PatientModel(doctorName: "Doctor Name", date: "04-05-2023 To 06-05-2023",city: "Mumbai",source: "Source",testName: "Thyroid panel");
+    PatientModel patientModel2 = new PatientModel(meetings: 5, date: "04-05-2023 To 06-05-2023",city: "Mumbai",source: "Source",testName: "Thyroid panel");
     list.add(patientModel2);
 
-    PatientModel patientModel3 = new PatientModel(doctorName: "Doctor Name", date: "04-05-2023 To 06-05-2023",city: "Mumbai",source: "Source",testName: "Thyroid panel");
+    PatientModel patientModel3 = new PatientModel(meetings: 7, date: "04-05-2023 To 06-05-2023",city: "Mumbai",source: "Source",testName: "Thyroid panel");
     list.add(patientModel3);
 
-    PatientModel patientModel4 = new PatientModel(doctorName: "Doctor Name", date: "04-05-2023 To 06-05-2023",city: "Mumbai",source: "Source",testName: "Thyroid panel");
+    PatientModel patientModel4 = new PatientModel(meetings: 11, date: "04-05-2023 To 06-05-2023",city: "Mumbai",source: "Source",testName: "Thyroid panel");
+
     list.add(patientModel4);
 
     super.initState();
@@ -135,80 +139,86 @@ class _JourneyPlannerScreenState extends State<JourneyPlannerScreen> {
                   shrinkWrap: true,
                   itemCount: list.length,
                   itemBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(left: 20,right: 20,bottom: 10, top: 10),
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.blueGrey[100]!,
-                                spreadRadius: 1,
-                                blurRadius: 7,
-                                offset: const Offset(0, 3), // changes position of shadow
-                              ),
-                             ],
-                            ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              GestureDetector(
-                                onTap: ()
-                                {
-
-                                },
-                                child: Container(
-                                  width: 40,
-                                  height:40,
-                                  child: Image.asset("assets/images/user_profile.png",fit: BoxFit.contain),
+                    return InkWell(
+                      onTap: (){
+                        pushTo(context, EditJourneyPlaner());
+                      },
+                      child: Column(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(left: 20,right: 20,bottom: 10, top: 10),
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.blueGrey[100]!,
+                                  spreadRadius: 1,
+                                  blurRadius: 7,
+                                  offset: const Offset(0, 3), // changes position of shadow
                                 ),
+                               ],
                               ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                GestureDetector(
+                                  onTap: ()
+                                  {
 
-                              const SizedBox(width: 10,),
+                                  },
+                                  child: Container(
+                                    width: 40,
+                                    height:40,
+                                    child: Image.asset("assets/images/user_profile.png",fit: BoxFit.contain),
+                                  ),
+                                ),
 
-                              Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      child: Text(list[index].city.toString(),style: const TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w500
+                                const SizedBox(width: 10,),
+
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        child: Text(list[index].city.toString(),style: const TextStyle(
+                                            fontSize: 20,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w500
+                                         ),
+                                        ),
                                        ),
+                                      const SizedBox(height: 3,),
+                                      Container(
+                                        child: Text(list[index].date.toString(),style: const TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.black87,
+                                            fontWeight: FontWeight.w400
+                                        ),
+                                        ),
                                       ),
-                                     ),
-                                    const SizedBox(height: 3,),
-                                    Container(
-                                      child: Text(list[index].date.toString(),style: const TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.black87,
-                                          fontWeight: FontWeight.w400
-                                      ),
-                                      ),
-                                    ),
 
-                                    const SizedBox(height: 3,),
-                                    Container(
-                                      child: Text(list[index].doctorName.toString(),style: const TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.black87,
-                                          fontWeight: FontWeight.w400
+                                      const SizedBox(height: 3,),
+                                      Container(
+                                        child: Text("${list[index].meetings.toString()} meetings",style: const TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.black87,
+                                            fontWeight: FontWeight.w400
+                                        ),
+                                        ),
                                       ),
-                                      ),
-                                    ),
-                                  ],
+
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     );
                   }
               ),
@@ -226,11 +236,11 @@ class _JourneyPlannerScreenState extends State<JourneyPlannerScreen> {
 
 
 class PatientModel {
-  String? doctorName;
+  int? meetings;
   String? testName;
   String? source;
   String? city;
   String? date;
 
-  PatientModel({this.doctorName, this.testName, this.source, this.city, this.date});
+  PatientModel({this.meetings, this.testName, this.source, this.city, this.date});
 }

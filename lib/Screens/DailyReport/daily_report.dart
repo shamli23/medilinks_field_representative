@@ -3,6 +3,8 @@ import 'package:medilinks_doctor_app/Constants/screennavigation.dart';
 import 'package:medilinks_doctor_app/Screens/DailyReport/add_daily_report.dart';
 import 'package:medilinks_doctor_app/Screens/LeaveApp/add_leave_app_form.dart';
 import 'package:medilinks_doctor_app/Screens/Profile/profile_screen.dart';
+import 'package:search_map_location/utils/google_search/place.dart';
+import 'package:search_map_location/widget/search_widget.dart';
 
 class DailyReport extends StatefulWidget {
   const DailyReport({Key? key}) : super(key: key);
@@ -205,6 +207,7 @@ class _DailyReportState extends State<DailyReport> {
             ),
           ),
         ),
+
       );
     }
   }

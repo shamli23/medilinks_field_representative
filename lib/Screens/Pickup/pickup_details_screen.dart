@@ -4,14 +4,22 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:intl/intl.dart';
 import 'package:medilinks_doctor_app/Constants/const_files.dart';
+import 'package:medilinks_doctor_app/Constants/screennavigation.dart';
+import 'package:medilinks_doctor_app/Screens/Pickup/pickup_screen.dart';
 import 'package:medilinks_doctor_app/common/theme_helper.dart';
+import 'package:medilinks_doctor_app/repository/api_repo.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:syncfusion_flutter_barcodes/barcodes.dart';
 
+import '../../models/pickup_list_response.dart';
+
 
 class PickupsDetailsScreen extends StatefulWidget {
-  const PickupsDetailsScreen({Key? key}) : super(key: key);
+   PickupsDetailsScreen( this.pickupData);
+
+  PickupData? pickupData;
 
   @override
   State<PickupsDetailsScreen> createState() => _PickupsDetailsScreenState();
@@ -54,7 +62,6 @@ class _PickupsDetailsScreenState extends State<PickupsDetailsScreen> {
         child: Container(
           margin: const EdgeInsets.only(left: 20,right: 20,bottom: 10, top: 10),
           padding: const EdgeInsets.all(10),
-          height: 550,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
@@ -101,7 +108,7 @@ class _PickupsDetailsScreenState extends State<PickupsDetailsScreen> {
                     SizedBox(height: 10,),
                     Container(
                       width: MediaQuery.of(context).size.width,
-                      child: const Text("Booking id : 056AS467",style:  TextStyle(
+                      child:  Text("Booking id : ${widget.pickupData?.sampleBookingId}",style:  TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w500,
                         fontSize: 20,
@@ -113,7 +120,7 @@ class _PickupsDetailsScreenState extends State<PickupsDetailsScreen> {
 
                     Container(
                       width: MediaQuery.of(context).size.width,
-                      child: const Text("Patient Name : David",style:  TextStyle(
+                      child:  Text("Patient Name : ${widget.pickupData?.name}",style:  TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w400,
                         fontSize: 20,
@@ -125,7 +132,30 @@ class _PickupsDetailsScreenState extends State<PickupsDetailsScreen> {
 
                     Container(
                       width: MediaQuery.of(context).size.width,
-                      child: const Text("Test Name : Colon Cancer",style:  TextStyle(
+                      child:  Text("Specimen Location: ${widget.pickupData?.specimenInformationLocationOfSpecimen}",style:  TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 20,
+                        ),
+                      ),
+                    ),
+
+
+                    SizedBox(height: 10,),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      child:  Text("Specimen Contact: ${widget.pickupData?.specimenInformationPhone}",style:  TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 20,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 10,),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      child:  Text("Test Name : ${widget.pickupData?.recurrenceScore}",style:  TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w400,
                         fontSize: 20,
@@ -138,7 +168,7 @@ class _PickupsDetailsScreenState extends State<PickupsDetailsScreen> {
 
                     Container(
                       width: MediaQuery.of(context).size.width,
-                      child: const Text("Location : Ghatkoper, Mumbai",style:  TextStyle(
+                      child:  Text("Location : ${widget.pickupData?.streetAddressCity}",style:  TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w400,
                         fontSize: 20,
@@ -150,7 +180,7 @@ class _PickupsDetailsScreenState extends State<PickupsDetailsScreen> {
 
                     Container(
                       width: MediaQuery.of(context).size.width,
-                      child: const Text("Booking Date : 27-04-2023",style:  TextStyle(
+                      child:  Text("Booking Date : ${DateFormat("dd-MM-yyyy").format(DateTime.parse(widget.pickupData?.createdAt??"")).toString()}",style:  TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w400,
                         fontSize: 20,
@@ -167,7 +197,7 @@ class _PickupsDetailsScreenState extends State<PickupsDetailsScreen> {
               SizedBox(height: 30,),
 
 
-              Container(
+              widget.pickupData?.sampleStatus=="Sample Collected"?SizedBox.shrink():Container(
                 decoration: ThemeHelper().buttonBoxDecoration(context),
                 child: ElevatedButton(
                   style: ThemeHelper().buttonStyle(),
@@ -183,14 +213,15 @@ class _PickupsDetailsScreenState extends State<PickupsDetailsScreen> {
                     ),
                   ),
                   onPressed: () {
-                  },
+                    updateSampleCollected(widget.pickupData?.sampleBookingId.toString()??"",widget.pickupData?.sampleStatus??"",widget.pickupData?.userId.toString()??"");
+                                     },
                 ),
               ),
 
-              SizedBox(height: 20,),
+              widget.pickupData?.sampleStatus=="Sample Collected"?SizedBox.shrink():SizedBox(height: 20,),
 
 
-              Container(
+              widget.pickupData?.sampleStatus=="Sample Collected"?SizedBox.shrink():Container(
                 decoration: ThemeHelper().buttonBoxDecoration(context),
                 child: ElevatedButton(
                   style: ThemeHelper().buttonStyle(),
@@ -227,9 +258,22 @@ Widget barcode(){
       child: SfBarcodeGenerator(
         backgroundColor: Colors.white,
         value: 'www.syncfusion.com',
+        symbology: Code128C(),
         showValue: true,
       ),
     );
 }
+
+updateSampleCollected(String sample_booking_id,String sample_status,String user_id)async{
+
+  Map<String, String> params = new Map<String, String>();
+  params["sample_booking_id"] = sample_booking_id;
+  params["sample_status"] = "Sample Collected";
+  params["user_id"] = user_id;
+  var response =   await ApiRepo().updateCollectedStatusList(context, params);
+
+}
+
+
 
 }
