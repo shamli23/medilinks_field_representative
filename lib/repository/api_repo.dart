@@ -8,8 +8,9 @@ import 'package:medilinks_doctor_app/models/medical_test_response.dart';
 import 'package:medilinks_doctor_app/models/pickup_list_response.dart';
 import 'package:http/http.dart'as http;
 import '../Constants/api_urls.dart';
+import '../models/journey_planner_list_response.dart';
 
- const  accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvYWR2YW5jZW1lZGlsaW5rcy5jb21cL2FwaVwvZmllbGQtcmVwcmVzZW50YXRpdmUtbG9naW4iLCJpYXQiOjE3MDI0Njk2OTEsImV4cCI6MTcwMjQ3MzI5MSwibmJmIjoxNzAyNDY5NjkxLCJqdGkiOiJ5MFJkOTdRdkpieFZDOWFhIiwic3ViIjoxNzIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.DyqgauyTRt-Wpzg1KrBOFU1FPjWGgYhJfkebkwnDf4Q";
+ const  accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvYWR2YW5jZW1lZGlsaW5rcy5jb21cL2FwaVwvZmllbGQtcmVwcmVzZW50YXRpdmUtbG9naW4iLCJpYXQiOjE3MDI1NTg1MDksImV4cCI6MTcwMjU2MjEwOSwibmJmIjoxNzAyNTU4NTA5LCJqdGkiOiJ5VmNDc1NjWEFXQWZGRlhEIiwic3ViIjoxNzIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.1nSzhKPNbWj9DmJPUrNR0-A0ZKGqjQkWohfAAEx1BXE";
 
 class ApiRepo{
   Future<PickupListResponse> getPickupList() async {
@@ -271,6 +272,99 @@ class ApiRepo{
 
     return leaveListFromJson(response.body);
   }
+
+  addJourneyPlanner(var params, BuildContext context) async
+  {
+    final response = await http.post(Uri.parse("${ApiUrls.addJourneyPlannerUrl}"),
+        body: params,
+        headers: {'Authorization': 'Bearer $accessToken'}
+    );
+
+    Navigator.pop(context);
+    Navigator.pop(context);
+
+    print("params ${params}");
+    print("Api url ${ApiUrls.addJourneyPlannerUrl}");
+    print("response ${response.body}");
+
+
+    if(response.statusCode == 200)
+    {
+      var res = await json.decode(response.body);
+
+      EasyLoading.showToast("${res['message']}",
+          dismissOnTap: true,
+          duration: const Duration(seconds: 1),
+          toastPosition: EasyLoadingToastPosition.center);
+
+    }
+    else
+    {
+      var res = await json.decode(response.body);
+
+      EasyLoading.showToast("${res['message']}",
+          dismissOnTap: true,
+          duration: const Duration(seconds: 1),
+          toastPosition: EasyLoadingToastPosition.center);
+    }
+  }
+
+  updateJourneyPlanner(var params, BuildContext context, String id) async
+  {
+    final response = await http.post(Uri.parse("${ApiUrls.updateJourneyPlannerUrl}/$id"),
+        body: params,
+        headers: {'Authorization': 'Bearer $accessToken'}
+    );
+
+    Navigator.pop(context);
+    Navigator.pop(context);
+
+    print("params ${params}");
+    print("Api url ${ApiUrls.updateJourneyPlannerUrl}");
+    print("response ${response.body}");
+
+
+    if(response.statusCode == 200)
+    {
+      var res = await json.decode(response.body);
+
+      EasyLoading.showToast("${res['message']}",
+          dismissOnTap: true,
+          duration: const Duration(seconds: 1),
+          toastPosition: EasyLoadingToastPosition.center);
+
+    }
+    else
+    {
+      var res = await json.decode(response.body);
+
+      EasyLoading.showToast("${res['message']}",
+          dismissOnTap: true,
+          duration: const Duration(seconds: 1),
+          toastPosition: EasyLoadingToastPosition.center);
+    }
+  }
+
+
+  Future<JourneyPlannerListResponse> getJourneyPlannerList() async {
+    final response = await http.post(Uri.parse("${ApiUrls.journeyPlannerListUrl}"),headers: {'Authorization': 'Bearer $accessToken'},body: {"query":""});
+
+    print("Api url ${ApiUrls.journeyPlannerListUrl}");
+    print("response ${response.body}");
+
+    return journeyPlannerListResponseFromJson(response.body);
+  }
+
+  Future<JourneyPlannerListResponse> searchJourneyPlannerList(String query) async {
+    final response = await http.post(Uri.parse("${ApiUrls.journeyPlannerListUrl}"),
+        headers: {'Authorization': 'Bearer $accessToken'},body: {"query": query});
+
+    print("Api url ${ApiUrls.journeyPlannerListUrl}");
+    print("response ${response.body}");
+
+    return journeyPlannerListResponseFromJson(response.body);
+  }
+
 
 
 }

@@ -14,4 +14,8 @@ static String leaveListUrl = "$baseUrl/listing-leave";
 static String addLeaveUrl = "$baseUrl/store-leave";
 static String searchLeaveUrl = "$baseUrl/search-leave";
 static String updateLeaveUrl = "$baseUrl/update-leave";
+static String addJourneyPlannerUrl = "$baseUrl/store-journey-planner";
+static String updateJourneyPlannerUrl = "$baseUrl/update-journey-planner";
+static String deleteDoctorUrl = "$baseUrl/delete-journey-planner";
+static String journeyPlannerListUrl = "$baseUrl/list-journey-planners";
 }

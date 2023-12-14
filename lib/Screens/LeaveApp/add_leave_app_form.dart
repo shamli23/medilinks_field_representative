@@ -137,7 +137,12 @@ class _AddLeaveFormState extends State<AddLeaveForm> {
                             fontSize: 17,
                             fontWeight: FontWeight.w400
                         ),
-                      ), // Not necessary for Option 1
+                      ),
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w400
+                      ),// Not necessary for Option 1
                       value: _leaveName,
                       dropdownColor: Colors.white,
                       isExpanded: true,
@@ -242,7 +247,7 @@ class _AddLeaveFormState extends State<AddLeaveForm> {
                     maxLines: 5,
                     keyboardType: TextInputType.multiline,
                     decoration:  InputDecoration(
-                      hintText: "Reason *",
+                      hintText: "Reason",
                       hintStyle: TextStyle(
                         color: Colors.grey
                       ),

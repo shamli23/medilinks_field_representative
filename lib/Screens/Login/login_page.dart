@@ -152,6 +152,7 @@ class _LoginPageState extends State<LoginPage>{
                obscureText: obsecure,
                decoration:InputDecoration(
                  hintText: "Enter Your Password",
+                 hintStyle: TextStyle(color: Colors.grey),
                  fillColor: Colors.white,
                  filled: true,
                  suffixIcon: obsecure == true ? GestureDetector(

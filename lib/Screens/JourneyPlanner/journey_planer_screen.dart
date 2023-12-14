@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:medilinks_doctor_app/Constants/screennavigation.dart';
 import 'package:medilinks_doctor_app/Screens/JourneyPlanner/add_journey_planer.dart';
 import 'package:medilinks_doctor_app/Screens/JourneyPlanner/edit_journey_palnner.dart';
-import 'package:medilinks_doctor_app/Screens/Profile/profile_screen.dart';
-import 'package:search_map_location/search_map_location.dart';
-import 'package:search_map_location/utils/google_search/place.dart';
+
+import '../../Constants/const_files.dart';
+import '../../models/journey_planner_list_response.dart';
+import '../../repository/api_repo.dart';
 
 class JourneyPlannerScreen extends StatefulWidget {
   const JourneyPlannerScreen({Key? key}) : super(key: key);
@@ -14,26 +15,71 @@ class JourneyPlannerScreen extends StatefulWidget {
 }
 
 class _JourneyPlannerScreenState extends State<JourneyPlannerScreen> {
-  List<PatientModel> list = [];
+  List<MeetingGroups> meetingList = [];
+  List<MeetingGroups> searchMeetingList = [];
+  var searchController = TextEditingController();
+  bool isSearching = false;
 
   @override
   void initState() {
 
-    PatientModel patientModel1 = new PatientModel(meetings: 10, date: "04-05-2023 To 06-05-2023",city: "Mumbai",source: "Source",testName: "Thyroid panel");
-    list.add(patientModel1);
-
-    PatientModel patientModel2 = new PatientModel(meetings: 5, date: "04-05-2023 To 06-05-2023",city: "Mumbai",source: "Source",testName: "Thyroid panel");
-    list.add(patientModel2);
-
-    PatientModel patientModel3 = new PatientModel(meetings: 7, date: "04-05-2023 To 06-05-2023",city: "Mumbai",source: "Source",testName: "Thyroid panel");
-    list.add(patientModel3);
-
-    PatientModel patientModel4 = new PatientModel(meetings: 11, date: "04-05-2023 To 06-05-2023",city: "Mumbai",source: "Source",testName: "Thyroid panel");
-
-    list.add(patientModel4);
+    fetchJourneyPlannerList();
 
     super.initState();
   }
+
+  fetchJourneyPlannerList()async{
+    Future.delayed(Duration.zero, () {
+      showLoader(context);
+    });
+    var response = await ApiRepo().getJourneyPlannerList();
+
+    if(response!=null){
+      for(var data in response.meetingGroups!){
+        meetingList.add(data);
+        setState(() {
+
+        });
+      }
+      Navigator.pop(context);
+    }
+  }
+
+
+  _onChangeHandler(value )
+  {
+    if(value.isNotEmpty){
+      isSearching = true;
+      searchMeetingList.clear();
+      setState(() {
+      });
+      searchJourneyPlanner(value);
+    }else{
+      isSearching = false;
+      searchMeetingList.clear();
+      setState(() {
+      });
+    }
+  }
+
+  searchJourneyPlanner(String query)async{
+
+    searchMeetingList.clear();
+    var response = await ApiRepo().searchJourneyPlannerList(query);
+    if(response.meetingGroups != null){
+      searchMeetingList.clear();
+      setState(() {
+
+      });
+      for(var data in response.meetingGroups!){
+        setState(() {
+          searchMeetingList.add(data);
+        });
+      }
+    }
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -111,10 +157,8 @@ class _JourneyPlannerScreenState extends State<JourneyPlannerScreen> {
 
                         Expanded(
                           child: TextFormField(
-                            //  controller: searchController,
-                            onChanged: (val){
-                              setState(() {});
-                            },
+                            controller: searchController,
+                            onChanged: _onChangeHandler,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Search....",
@@ -135,93 +179,96 @@ class _JourneyPlannerScreenState extends State<JourneyPlannerScreen> {
 
               SizedBox(height: 20,),
 
-              ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: list.length,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: (){
-                        pushTo(context, EditJourneyPlaner());
-                      },
-                      child: Column(
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.only(left: 20,right: 20,bottom: 10, top: 10),
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.blueGrey[100]!,
-                                  spreadRadius: 1,
-                                  blurRadius: 7,
-                                  offset: const Offset(0, 3), // changes position of shadow
+             (isSearching? searchMeetingList.isNotEmpty:meetingList.isNotEmpty)?RefreshIndicator(
+                onRefresh: (){
+                  return Future.delayed(Duration(seconds: 1),
+                          (){meetingList.clear();
+                      fetchJourneyPlannerList();
+                      }
+                  );
+                },
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: isSearching?searchMeetingList.length:meetingList.length,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: (){
+                          pushTo(context, EditJourneyPlaner(meetingList[index]));
+                        },
+                        child: Column(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(left: 20,right: 20,bottom: 10, top: 10),
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.blueGrey[100]!,
+                                    spreadRadius: 1,
+                                    blurRadius: 7,
+                                    offset: const Offset(0, 3), // changes position of shadow
+                                  ),
+                                 ],
                                 ),
-                               ],
-                              ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                GestureDetector(
-                                  onTap: ()
-                                  {
-
-                                  },
-                                  child: Container(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
                                     width: 40,
                                     height:40,
                                     child: Image.asset("assets/images/user_profile.png",fit: BoxFit.contain),
                                   ),
-                                ),
 
-                                const SizedBox(width: 10,),
+                                  const SizedBox(width: 10,),
 
-                                Expanded(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        child: Text(list[index].city.toString(),style: const TextStyle(
-                                            fontSize: 20,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w500
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          child: Text(isSearching?searchMeetingList[index].city.toString():meetingList[index].city.toString(),style: const TextStyle(
+                                              fontSize: 20,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w500
+                                           ),
+                                          ),
                                          ),
+                                        const SizedBox(height: 3,),
+                                        Container(
+                                          child: Text("${isSearching?searchMeetingList[index].fromDate.toString():meetingList[index].fromDate.toString()} To ${isSearching?searchMeetingList[index].toDate.toString():meetingList[index].toDate.toString()}",style: const TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black87,
+                                              fontWeight: FontWeight.w400
+                                          ),
+                                          ),
                                         ),
-                                       ),
-                                      const SizedBox(height: 3,),
-                                      Container(
-                                        child: Text(list[index].date.toString(),style: const TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.black87,
-                                            fontWeight: FontWeight.w400
-                                        ),
-                                        ),
-                                      ),
 
-                                      const SizedBox(height: 3,),
-                                      Container(
-                                        child: Text("${list[index].meetings.toString()} meetings",style: const TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.black87,
-                                            fontWeight: FontWeight.w400
+                                        const SizedBox(height: 3,),
+                                        Container(
+                                          child: Text("${isSearching?searchMeetingList[index].meetingCount.toString():meetingList[index].meetingCount.toString()} meetings",style: const TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black87,
+                                              fontWeight: FontWeight.w400
+                                          ),
+                                          ),
                                         ),
-                                        ),
-                                      ),
 
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-              ),
+                          ],
+                        ),
+                      );
+                    }
+                ),
+              ):SizedBox.shrink(),
 
               const SizedBox(height: 60,),
 
@@ -233,14 +280,3 @@ class _JourneyPlannerScreenState extends State<JourneyPlannerScreen> {
   }
 }
 
-
-
-class PatientModel {
-  int? meetings;
-  String? testName;
-  String? source;
-  String? city;
-  String? date;
-
-  PatientModel({this.meetings, this.testName, this.source, this.city, this.date});
-}

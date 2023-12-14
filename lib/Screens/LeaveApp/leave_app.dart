@@ -197,7 +197,9 @@ class _LeaveAppState extends State<LeaveApp> {
                       itemBuilder: (context, index) {
                         return InkWell(
                           onTap: (){
-                            pushTo(context, EditLeaveForm(isSearching?searchLeaveList[index]:leaveList[index]));
+                            if((isSearching?searchLeaveList[index].status:leaveList[index].status)?.toLowerCase() == "pending"){
+                              pushTo(context, EditLeaveForm(isSearching?searchLeaveList[index]:leaveList[index]));
+                            }
                           },
                           child: Column(
                             children: [

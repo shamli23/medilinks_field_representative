@@ -8,6 +8,7 @@ class ThemeHelper {
       labelStyle: TextStyle(
           color: Colors.grey
       ),
+      hintStyle: TextStyle(color: Colors.grey),
       hintText: hintText,
       fillColor: Colors.white,
       filled: true,
@@ -33,6 +34,7 @@ class ThemeHelper {
   InputDecoration withoutLableInputDecoration([String lableText="", String hintText = ""]){
     return InputDecoration(
       hintText: hintText,
+      hintStyle: TextStyle(color: Colors.grey),
       fillColor: Colors.white,
       filled: true,
       contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
