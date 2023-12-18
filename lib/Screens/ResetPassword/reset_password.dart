@@ -1,12 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:medilinks_doctor_app/Constants/const_files.dart';
 import 'package:medilinks_doctor_app/Screens/Login/login_page.dart';
 import 'package:medilinks_doctor_app/common/theme_helper.dart';
 import 'package:medilinks_doctor_app/widgets/header_widget.dart';
 
+import '../../repository/api_repo.dart';
+
 
 class ResetPassword extends StatefulWidget {
-  const ResetPassword({Key? key}) : super(key: key);
+
+  String email;
+  String otp;
+   ResetPassword(this.email,this.otp);
 
   @override
   State<ResetPassword> createState() => _ResetPasswordState();
@@ -14,6 +21,8 @@ class ResetPassword extends StatefulWidget {
 
 class _ResetPasswordState extends State<ResetPassword> {
   double _headerHeight = 300;
+  var _password = TextEditingController();
+  var _confirmPassword = TextEditingController();
 
   @override
   void initState() {
@@ -103,8 +112,9 @@ class _ResetPasswordState extends State<ResetPassword> {
 
                       Container(
                         decoration: boxDecoration(context),
-                        child: TextField(
+                        child: TextFormField(
                           obscureText: true,
+                          controller: _password,
                           decoration: ThemeHelper().withoutLableInputDecoration('New Password*', 'Enter Your New Password'),
                         ),
                       ),
@@ -128,7 +138,8 @@ class _ResetPasswordState extends State<ResetPassword> {
 
                       Container(
                         decoration: boxDecoration(context),
-                        child:  TextField(
+                        child:  TextFormField(
+                          controller: _confirmPassword,
                           obscureText: true,
                           decoration:  ThemeHelper().withoutLableInputDecoration('Confirm Password*', 'Confirm Your New Password'),
                         ),
@@ -148,7 +159,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                       ),
                       onPressed: (){
                         //After successful login we will redirect to profile page. Let's create profile page now
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                        resetPassword();
                       },
                     ),
                   ),
@@ -162,5 +173,21 @@ class _ResetPasswordState extends State<ResetPassword> {
         ],
       ),
     );
+  }
+
+  void resetPassword()
+  {
+    Map<String, String> params = new Map<String, String>();
+    params["email"] = widget.email.toString();
+    params["verification_code"] = widget.otp.toString();
+    params["password"] = _password.text;
+    params["confirm_password"] = _confirmPassword.text;
+    params["device_token"] = "6w4r7hws";
+    params["device_type"] = Platform.isAndroid ? "android" : "ios";
+
+    Future.delayed(Duration.zero, () {
+      showLoader(context);
+    });
+    ApiRepo().resetPassword(params, context);
   }
 }

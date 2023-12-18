@@ -305,7 +305,5 @@ class _EditJourneyPlaner extends State<EditJourneyPlaner> {
     await ApiRepo().updateJourneyPlanner(params, context,id);
   }
 
-  deleteDoctor(){
 
-  }
 }

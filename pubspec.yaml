@@ -52,7 +52,9 @@ dependencies:
   syncfusion_flutter_barcodes: ^23.2.7
   image_gallery_saver: ^2.0.3
   search_map_location: ^0.0.6
+  geolocator: ^10.1.0
   pull_to_refresh: ^2.0.0
+  shared_preferences: ^2.2.2
 
 
 dev_dependencies:

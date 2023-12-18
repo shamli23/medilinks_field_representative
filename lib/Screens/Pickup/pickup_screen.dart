@@ -11,6 +11,7 @@ import 'package:medilinks_doctor_app/models/pickup_list_response.dart';
 import 'package:medilinks_doctor_app/repository/api_repo.dart';
 
 import '../../Constants/const_files.dart';
+import '../../Constants/prefs_manager.dart';
 
 
 class PickupScreen extends StatefulWidget {
@@ -21,13 +22,15 @@ class PickupScreen extends StatefulWidget {
 }
 
 class _PickupScreenState extends State<PickupScreen> {
-  var _searchText = TextEditingController();
+  var _searchText1 = TextEditingController();
+  var _searchText2 = TextEditingController();
 
   List<PickupData> pickupData = [];
   List<PickupData> collectedData = [];
   List<PickupData> searchPickupData = [];
   List<PickupData> searchCollectedData = [];
   bool isSearching = false;
+  bool isCollected = false;
 
   fetchPickupList()async{
     Future.delayed(Duration.zero, () {
@@ -37,10 +40,13 @@ class _PickupScreenState extends State<PickupScreen> {
 
    if(response!=null){
      for(var data in response.data!){
-       pickupData.add(data);
-       setState(() {
+       if(data.sampleStatus?.toLowerCase() != "sample collected"){
+         pickupData.add(data);
+         setState(() {
 
-       });
+         });
+       }
+
      }
      Navigator.pop(context);
    }
@@ -50,8 +56,8 @@ class _PickupScreenState extends State<PickupScreen> {
     Future.delayed(Duration.zero, () {
       showLoader(context);
     });
-   var response = await ApiRepo().getCollectedList();
-
+   var response = await ApiRepo().getCollectedList('');
+    collectedData.clear();
    if(response!=null){
      for(var data in response.data!){
        collectedData.add(data);
@@ -60,6 +66,24 @@ class _PickupScreenState extends State<PickupScreen> {
        });
      }
      Navigator.pop(context);
+   }
+  }
+
+
+  fetchSearchCollectedList(String query)async{
+
+   var response = await ApiRepo().getCollectedList(query);
+   searchCollectedData.clear();
+   setState(() {
+
+   });
+   if(response!=null){
+     for(var data in response.data!){
+       setState(() {
+         searchCollectedData.add(data);
+       });
+     }
+     print("searchCollectedData $searchCollectedData");
    }
   }
 
@@ -72,17 +96,34 @@ class _PickupScreenState extends State<PickupScreen> {
     super.initState();
   }
 
-  _onChangeHandler(value )
+  _onChangePickupHandler(value)
   {
-    if(value.isNotEmpty){
+
+      if(_searchText2.text.isNotEmpty){
+        isSearching = true;
+        searchPickupData.clear();
+        setState(() {
+        });
+        searchPickupSamples(value);
+      }else{
+        isSearching = false;
+        searchPickupData.clear();
+        setState(() {
+        });
+
+    }
+  }
+
+  _onChangeCollectedHandler(value){
+    if(_searchText1.text.isNotEmpty){
       isSearching = true;
-      searchPickupData.clear();
+      searchCollectedData.clear();
       setState(() {
       });
-      searchPickupSamples(value);
+      fetchSearchCollectedList(value);
     }else{
       isSearching = false;
-      searchPickupData.clear();
+      searchCollectedData.clear();
       setState(() {
       });
     }
@@ -92,6 +133,8 @@ class _PickupScreenState extends State<PickupScreen> {
     Map<String, String> params = new Map<String, String>();
     params["query"] = query;
     searchPickupData.clear();
+    setState(() {
+    });
     var response = await ApiRepo().searchPickupSamples(context, params);
     if(response.data != null){
       searchPickupData.clear();
@@ -99,9 +142,12 @@ class _PickupScreenState extends State<PickupScreen> {
 
       });
       for(var data in response.data!){
-        setState(() {
-          searchPickupData.add(data);
-        });
+        if(data.sampleStatus?.toLowerCase() != "sample collected") {
+          setState(() {
+            searchPickupData.add(data);
+          });
+        }
+
       }
     }
 
@@ -142,7 +188,7 @@ class _PickupScreenState extends State<PickupScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          child: Text("Hi  Sam,", style: TextStyle(
+                          child: Text("Hi  ${Prefs.check_name},", style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w500,
                               color: Colors.white
@@ -199,10 +245,9 @@ class _PickupScreenState extends State<PickupScreen> {
                         ),
 
                         Expanded(
-                          child: TextFormField(
-                            controller: _searchText,
-
-                            onChanged: _onChangeHandler,
+                          child:isCollected?TextFormField(
+                            controller: _searchText2,
+                            onChanged: _onChangePickupHandler,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Search....",
@@ -212,7 +257,19 @@ class _PickupScreenState extends State<PickupScreen> {
                                     fontWeight: FontWeight.w500
                                 )
                             ),
-                          ),
+                          ):TextFormField(
+                            controller: _searchText1,
+                            onChanged: _onChangeCollectedHandler,
+                            decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: "Search....",
+                                hintStyle: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500
+                                )
+                            ),
+                          )
                         ),
                       ],
                     ),
@@ -225,6 +282,18 @@ class _PickupScreenState extends State<PickupScreen> {
           ),
           toolbarHeight: 130,
           bottom: TabBar(
+            onTap: (index){
+              print("isCollected ${isCollected}");
+              if(index == 0){
+                setState(() {
+                  isCollected = true;
+                });
+              }else{
+                setState(() {
+                  isCollected = false;
+                });
+              }
+            },
             indicatorColor: Colors.white,
               tabs: [
             Tab(text: "Pickup",),
@@ -483,15 +552,15 @@ class _PickupScreenState extends State<PickupScreen> {
                 child: Stack(
                   children: <Widget>[
 
-                    collectedData.isNotEmpty?ListView.builder(
+                    (isSearching?searchCollectedData.isNotEmpty:collectedData.isNotEmpty)?ListView.builder(
                         shrinkWrap: true,
-                        itemCount: collectedData.length,
+                        itemCount: isSearching?searchCollectedData.length:collectedData.length,
                         itemBuilder: (context, index) {
                           if(index == 0)
                           {
                             return GestureDetector(
                               onTap: (){
-                                pushTo(context,  PickupsDetailsScreen(collectedData[index]));
+                                pushTo(context,  PickupsDetailsScreen(isSearching?searchCollectedData[index]:collectedData[index]));
                               },
                               child: Column(
                                 children: [
@@ -539,7 +608,7 @@ class _PickupScreenState extends State<PickupScreen> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Container(
-                                                child: Text(collectedData[index].name.toString(),style: const TextStyle(
+                                                child: Text(isSearching?searchCollectedData[index].name.toString():collectedData[index].name.toString(),style: const TextStyle(
                                                     fontSize: 20,
                                                     color: Colors.black,
                                                     fontWeight: FontWeight.w500
@@ -560,7 +629,7 @@ class _PickupScreenState extends State<PickupScreen> {
                                                 children: [
                                                   Expanded(
                                                     child: Container(
-                                                      child: Text(DateFormat('dd-MM-yyyy').format(DateTime.parse(collectedData[index].createdAt??"")).toString(),style: const TextStyle(
+                                                      child: Text(DateFormat('dd-MM-yyyy').format(DateTime.parse(isSearching?searchCollectedData[index].createdAt??"":collectedData[index].createdAt??"")).toString(),style: const TextStyle(
                                                           fontSize: 16,
                                                           color: Colors.black87,
                                                           fontWeight: FontWeight.w400
@@ -570,7 +639,7 @@ class _PickupScreenState extends State<PickupScreen> {
                                                   ),
 
                                                   Container(
-                                                    child: Text(collectedData[index].sampleStatus.toString(),style: TextStyle(
+                                                    child: Text(isSearching?searchCollectedData[index].sampleStatus.toString():collectedData[index].sampleStatus.toString(),style: TextStyle(
                                                       fontSize: 15,
                                                       color: Colors.white,
                                                       fontWeight: FontWeight.w500,
@@ -634,7 +703,7 @@ class _PickupScreenState extends State<PickupScreen> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Container(
-                                            child: Text(collectedData[index].name.toString(),style: const TextStyle(
+                                            child: Text(isSearching?searchCollectedData[index].name.toString():collectedData[index].name.toString(),style: const TextStyle(
                                                 fontSize: 20,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.w500
@@ -643,7 +712,7 @@ class _PickupScreenState extends State<PickupScreen> {
                                           ),
                                           const SizedBox(height: 3,),
                                           Container(
-                                            child: Text(collectedData[index].streetAddressCity.toString(),style: const TextStyle(
+                                            child: Text(isSearching?searchCollectedData[index].streetAddressCity.toString():collectedData[index].streetAddressCity.toString(),style: const TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.black87,
                                                 fontWeight: FontWeight.w400
@@ -655,7 +724,7 @@ class _PickupScreenState extends State<PickupScreen> {
                                             children: [
                                               Expanded(
                                                 child: Container(
-                                                  child: Text(DateFormat('dd-MM-yyyy').format(DateTime.parse(collectedData[index].createdAt??"")).toString(),style: const TextStyle(
+                                                  child: Text(DateFormat('dd-MM-yyyy').format(DateTime.parse(isSearching?searchCollectedData[index].createdAt??"":collectedData[index].createdAt??"")).toString(),style: const TextStyle(
                                                       fontSize: 16,
                                                       color: Colors.black87,
                                                       fontWeight: FontWeight.w400
@@ -673,7 +742,7 @@ class _PickupScreenState extends State<PickupScreen> {
                                                 height: 25,
                                                 width: 150,
                                                 alignment: Alignment.center,
-                                                child: Text(collectedData[index].sampleStatus.toString(),style: const TextStyle(
+                                                child: Text(isSearching?searchCollectedData[index].sampleStatus.toString():collectedData[index].sampleStatus.toString(),style: const TextStyle(
                                                   fontSize: 15,
                                                   color: Colors.white,
                                                   fontWeight: FontWeight.w500,

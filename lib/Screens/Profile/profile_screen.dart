@@ -5,6 +5,8 @@ import 'package:medilinks_doctor_app/Screens/ChangePassword/change_password.dart
 import 'package:medilinks_doctor_app/Screens/EditProfileScreen/EditProfileScreen.dart';
 import 'package:medilinks_doctor_app/Screens/Login/login_page.dart';
 
+import '../../Constants/prefs_manager.dart';
+
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -67,102 +69,105 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
 
 
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        padding: EdgeInsets.only( left: 10, right: 20),
-                        child: Text("John Martin"
-                          ,style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black
+                  Flexible(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only( left: 10, right: 20),
+                          child: Text(Prefs.check_name
+                            ,style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black
+                            ),
                           ),
                         ),
-                      ),
 
-                      SizedBox(height: 4,),
+                        SizedBox(height: 4,),
 
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        padding: EdgeInsets.only( left: 10, right: 20),
-                        child: Text("johnmartin1999@gmail.com"
-                          ,style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.grey[600]
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only( left: 10, right: 20),
+                          child: Text(Prefs.check_email
+                            ,style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey[600],
+                            ),
+                            maxLines: 2,
                           ),
                         ),
-                      ),
 
-                      SizedBox(height: 3,),
+                        SizedBox(height: 3,),
 
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        padding: EdgeInsets.only( left: 10, right: 20),
-                        child: Text("91 9876543210"
-                          ,style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.grey[600]
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only( left: 10, right: 20),
+                          child: Text(Prefs.check_mobile
+                            ,style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey[600]
+                            ),
                           ),
                         ),
-                      ),
 
-                      SizedBox(height: 7,),
-                    ],
+                        SizedBox(height: 7,),
+                      ],
+                    ),
                   )
                 ],
               ),
 
               SizedBox(height: 7,),
 
-              Container(
-                decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(8),topRight: Radius.circular(8),)
-                ),
-                margin: EdgeInsets.only(left: 10,right: 10),
-                padding: EdgeInsets.only(top: 15,bottom: 15),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        alignment: Alignment.centerLeft,
-                        padding: EdgeInsets.only(left: 20, right: 20),
-                        child: Text("City"
-                          ,style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black
-                          ),
-                        ),
-                      ),
-                    ),
-
-
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      padding: EdgeInsets.only(left: 20, right: 20),
-                      child: Text("Mumbai"
-                        ,style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey[600]
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              Container(
-                height: 0.5,
-                color: Colors.grey,
-                margin : EdgeInsets.only(left: 20, right: 20),
-              ),
+              // Container(
+              //   decoration: const BoxDecoration(
+              //       color: Colors.white,
+              //       borderRadius: BorderRadius.only(topLeft: Radius.circular(8),topRight: Radius.circular(8),)
+              //   ),
+              //   margin: EdgeInsets.only(left: 10,right: 10),
+              //   padding: EdgeInsets.only(top: 15,bottom: 15),
+              //   child: Row(
+              //     children: [
+              //       Expanded(
+              //         child: Container(
+              //           alignment: Alignment.centerLeft,
+              //           padding: EdgeInsets.only(left: 20, right: 20),
+              //           child: Text("City"
+              //             ,style: TextStyle(
+              //                 fontSize: 20,
+              //                 fontWeight: FontWeight.w500,
+              //                 color: Colors.black
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //
+              //
+              //       Container(
+              //         alignment: Alignment.centerLeft,
+              //         padding: EdgeInsets.only(left: 20, right: 20),
+              //         child: Text("Mumbai"
+              //           ,style: TextStyle(
+              //               fontSize: 17,
+              //               fontWeight: FontWeight.w500,
+              //               color: Colors.grey[600]
+              //           ),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              //
+              // Container(
+              //   height: 0.5,
+              //   color: Colors.grey,
+              //   margin : EdgeInsets.only(left: 20, right: 20),
+              // ),
 
 
               InkWell(

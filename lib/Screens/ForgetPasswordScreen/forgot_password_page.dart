@@ -11,6 +11,8 @@ import 'package:medilinks_doctor_app/Screens/VerificationOtp/forgot_password_ver
 import 'package:medilinks_doctor_app/common/theme_helper.dart';
 import 'package:medilinks_doctor_app/widgets/header_widget.dart';
 
+import '../../repository/api_repo.dart';
+
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({Key? key}) : super(key: key);
@@ -169,7 +171,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                 ),
                                 onPressed: () {
 
-                                  pushTo(context, ForgotPasswordVerificationPage());
+                                  if(_formKey.currentState!.validate())
+                                  apiCalling();
 
                                 //  apiCalling();
                                 },
@@ -222,9 +225,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
        return;
      }
 
+     Future.delayed(Duration.zero, () {
+       showLoader(context);
+     });
      Map<String, String> params = new Map<String, String>();
      params["email"] = _emailController.text.toString();
 
-  //   ApiRepo().forgetPasswordResponse(params, context, _emailController.text.toString());
+  ApiRepo().forgotPassword(params, context,_emailController.text.toString());
    }
  }

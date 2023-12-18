@@ -10,6 +10,8 @@ import 'package:medilinks_doctor_app/Screens/ForgetPasswordScreen/forgot_passwor
 import 'package:medilinks_doctor_app/common/theme_helper.dart';
 import 'package:medilinks_doctor_app/widgets/header_widget.dart';
 
+import '../../repository/api_repo.dart';
+
 
 
 class LoginPage extends StatefulWidget{
@@ -230,7 +232,8 @@ class _LoginPageState extends State<LoginPage>{
            ),
            onPressed: ()
            {
-             replaceRoute(context, DashBoard(currentIndex: 0));
+             if(_formKey.currentState!.validate())
+             apiCalling(context);
 
           //   apiCalling();
            },
@@ -238,7 +241,7 @@ class _LoginPageState extends State<LoginPage>{
        );
      }
 
-     void apiCalling() async {
+     void apiCalling(BuildContext context) async {
        if (_emailController.text.toString().toString() == "" || !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(_emailController.text.toString().toString())) {
          EasyLoading.showToast("Enter a valid email",
              dismissOnTap: true,
@@ -271,18 +274,17 @@ class _LoginPageState extends State<LoginPage>{
        Map<String, String> params = new Map<String, String>();
        params["email"] = _emailController.text.toString();
        params["password"] = _passwordlController.text.toString();
-       params["device_type"] = Platform.isAndroid ? "android" : "ios";
-       params["device_token"] = "6w4r7hws";
 
-       // Future.delayed(Duration.zero, () {
-       //   showLoader(context);
-       // });
-       //
-       // try {
-       //   var id = await ApiRepo().loginResponse(params, context);
-       // }
-       //
-       // catch(e){}
+
+       Future.delayed(Duration.zero, () {
+         showLoader(context);
+       });
+
+       try {
+         var response = await ApiRepo().login(context,params);
+       }
+
+       catch(e){}
      }
    }
 

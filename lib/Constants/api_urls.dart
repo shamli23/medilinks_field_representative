@@ -1,6 +1,10 @@
 class ApiUrls{
 static final String baseUrl = "https://advancemedilinks.com/api";
 
+static String loginUrl = "$baseUrl/field-representative-login";
+static String forgotPasswordUrl = "$baseUrl/send-reset-otp-password";
+static String changePassword = "$baseUrl/change-patient-password";
+static String resetPasswordUrl = "$baseUrl/reset-password-update";
 static String pickupListUrl = "$baseUrl/sample-pickup-list";
 static String collectedListUrl = "$baseUrl/sample-collected-list";
 static String updateSampleStatusUrl = "$baseUrl/update-sample-status";
@@ -18,4 +22,6 @@ static String addJourneyPlannerUrl = "$baseUrl/store-journey-planner";
 static String updateJourneyPlannerUrl = "$baseUrl/update-journey-planner";
 static String deleteDoctorUrl = "$baseUrl/delete-journey-planner";
 static String journeyPlannerListUrl = "$baseUrl/list-journey-planners";
+static String addDailyReportsUrl = "$baseUrl/store-daily-reports";
+static String dailyReportsListUrl = "$baseUrl/listing-daily-reports";
 }

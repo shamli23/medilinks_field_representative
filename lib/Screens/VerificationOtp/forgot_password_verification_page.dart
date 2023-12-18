@@ -1,11 +1,14 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:medilinks_doctor_app/Constants/const_files.dart';
 import 'package:medilinks_doctor_app/Constants/screennavigation.dart';
 import 'package:medilinks_doctor_app/Screens/ResetPassword/reset_password.dart';
 import 'package:medilinks_doctor_app/common/theme_helper.dart';
 import 'package:medilinks_doctor_app/widgets/header_widget.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+
+import '../../repository/api_repo.dart';
 
 class ForgotPasswordVerificationPage extends StatefulWidget {
   final String? email;
@@ -250,7 +253,7 @@ class _ForgotPasswordVerificationPageState extends State<ForgotPasswordVerificat
                                 ),
                                 onPressed: ()
                                 {
-                                  pushTo(context, ResetPassword());
+                                  verifyOtpCalling();
                                 }
                               ),
                             ),
@@ -272,32 +275,33 @@ class _ForgotPasswordVerificationPageState extends State<ForgotPasswordVerificat
 
 extension ApiCalling on _ForgotPasswordVerificationPageState
 {
-  // void verifyOtpCalling()
-  // {
-  //   if (_codeController.text.toString().length < 6) {
-  //     EasyLoading.showToast("Enter a valid OTP",
-  //         dismissOnTap: true,
-  //         duration: const Duration(seconds: 1),
-  //         toastPosition: EasyLoadingToastPosition.center);
-  //
-  //     return;
-  //   }
-  //
-  //   Map<String, String> params = new Map<String, String>();
-  //   params["email"] = widget.email.toString();
-  //   params["verification_code"] = _codeController.text.toString();
-  //
-  //
-  //   ApiRepo().VerifyOtpResponse(params, context);
-  // }
-  //
-  //
-  // void resendOtpCalling()
-  // {
-  //   Map<String, String> params = new Map<String, String>();
-  //   params["email"] = widget.email.toString();
-  //
-  //
-  //   ApiRepo().resendOtpResponse(params);
-  // }
+  void verifyOtpCalling()
+  {
+    if (_codeController.text.toString().length < 6) {
+      EasyLoading.showToast("Enter a valid OTP",
+          dismissOnTap: true,
+          duration: const Duration(seconds: 1),
+          toastPosition: EasyLoadingToastPosition.center);
+
+      return;
+    }
+
+
+    Map<String, String> params = new Map<String, String>();
+    params["email"] = widget.email.toString();
+    params["verification_code"] = _codeController.text.toString();
+  pushTo(context, ResetPassword(widget.email.toString(),_codeController.text.toString()));
+
+
+  }
+
+
+  void resendOtpCalling()
+  {
+    Map<String, String> params = new Map<String, String>();
+    params["email"] = widget.email.toString();
+
+
+    ApiRepo().resendOtp(params,context);
+  }
 }
