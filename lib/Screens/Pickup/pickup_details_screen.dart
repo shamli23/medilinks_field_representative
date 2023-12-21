@@ -3,11 +3,10 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:medilinks_doctor_app/Constants/const_files.dart';
-import 'package:medilinks_doctor_app/Constants/screennavigation.dart';
-import 'package:medilinks_doctor_app/Screens/Pickup/pickup_screen.dart';
 import 'package:medilinks_doctor_app/common/theme_helper.dart';
 import 'package:medilinks_doctor_app/repository/api_repo.dart';
 import 'package:screenshot/screenshot.dart';
@@ -242,6 +241,10 @@ class _PickupsDetailsScreenState extends State<PickupsDetailsScreen> {
                     print("image ${image.length}");
                     var result = await ImageGallerySaver.saveImage(image);
                     print("result ${result}");
+                    EasyLoading.showToast("Barcode is downloaded on your device",
+                        dismissOnTap: true,
+                        duration: const Duration(seconds: 1),
+                        toastPosition: EasyLoadingToastPosition.center);
                   },
                 ),
               ),
@@ -257,9 +260,8 @@ Widget barcode(){
       controller: screenshotController,
       child: SfBarcodeGenerator(
         backgroundColor: Colors.white,
-        value: 'www.syncfusion.com',
+        value: widget.pickupData?.orderId,
         symbology: Code128C(),
-        showValue: true,
       ),
     );
 }

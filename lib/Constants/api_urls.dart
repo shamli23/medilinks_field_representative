@@ -24,4 +24,6 @@ static String deleteDoctorUrl = "$baseUrl/delete-journey-planner";
 static String journeyPlannerListUrl = "$baseUrl/list-journey-planners";
 static String addDailyReportsUrl = "$baseUrl/store-daily-reports";
 static String dailyReportsListUrl = "$baseUrl/listing-daily-reports";
+static String profilePolicyApiUrl = "$baseUrl/get-cms";
+
 }

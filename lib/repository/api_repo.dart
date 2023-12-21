@@ -14,12 +14,44 @@ import 'package:medilinks_doctor_app/models/pickup_list_response.dart';
 import 'package:http/http.dart'as http;
 import '../Constants/api_urls.dart';
 import '../Screens/VerificationOtp/forgot_password_verification_page.dart';
+import '../models/PrivacyPolicyResponse.dart';
 import '../models/journey_planner_list_response.dart';
 import 'package:medilinks_doctor_app/Constants/prefs_manager.dart';
  const  accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvYWR2YW5jZW1lZGlsaW5rcy5jb21cL2FwaVwvZmllbGQtcmVwcmVzZW50YXRpdmUtbG9naW4iLCJpYXQiOjE3MDI4Nzg2NDAsImV4cCI6MTcwMjg4MjI0MCwibmJmIjoxNzAyODc4NjQwLCJqdGkiOiJtaUR6V1YwZXdKVXlOM0pXIiwic3ViIjoxNzIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.XPsa7ctT2lM9_Q6Ci0Vb1FUTz8ki3uhrZgfDC_vzZiY";
 
 class ApiRepo{
 
+
+  Future<PrivacyPolicyResponse> getPrivacyPolicyList(var context, var params) async
+  {
+    print("${Prefs.check_auth_token}");
+    print("params ${params}");
+
+    var response = await http.post(Uri.parse(ApiUrls.profilePolicyApiUrl), body: params, headers: {'Authorization': 'Bearer ${Prefs.check_auth_token}',});
+
+    print("api url   ${ApiUrls.profilePolicyApiUrl}");
+    print("${response.body}");
+    print("params ${params}");
+
+    try
+    {
+      var itemdata = json.decode(response.body);
+
+      if(itemdata['status'] == "Token is Invalid" || itemdata['status'] == "Token is Expired" || itemdata['status'] == "Could not refresh token")
+      {
+        Prefs.setBool('is_logged_in_new', false);
+        Prefs.setString('user_name', "");
+        Prefs.setString('user_auth_token', "");
+        Prefs.loadData();
+
+        replaceRoute(context, LoginPage());
+      }
+    }
+    catch(e){}
+
+
+    return privacyPolicyResponseFromJson(response.body);
+  }
 
   Future<LoginResponse> login(BuildContext context,Map<String, String> params) async {
     final response = await http.post(Uri.parse("${ApiUrls.loginUrl}"),body: params);
@@ -499,9 +531,9 @@ class ApiRepo{
     }
   }
 
-  updateJourneyPlanner(var params, BuildContext context, String id) async
+  updateJourneyPlanner(var params, BuildContext context) async
   {
-    final response = await http.post(Uri.parse("${ApiUrls.updateJourneyPlannerUrl}/$id"),
+    final response = await http.post(Uri.parse("${ApiUrls.updateJourneyPlannerUrl}"),
         body: params,
         headers: {'Authorization': 'Bearer ${Prefs.check_auth_token}'}
     );

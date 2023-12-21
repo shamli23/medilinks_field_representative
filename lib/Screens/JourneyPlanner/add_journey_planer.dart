@@ -50,7 +50,7 @@ class _AddJourneyPlanerState extends State<AddJourneyPlaner> {
           ),
         ),
         title: Text(
-          "Add Journey Planer",
+          "Add Journey Planner",
           style: TextStyle(
               fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white),
         ),

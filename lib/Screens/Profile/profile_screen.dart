@@ -6,6 +6,8 @@ import 'package:medilinks_doctor_app/Screens/EditProfileScreen/EditProfileScreen
 import 'package:medilinks_doctor_app/Screens/Login/login_page.dart';
 
 import '../../Constants/prefs_manager.dart';
+import '../PrivacyPolicy/privacy_policy.dart';
+import '../TermsAndConditions/terms_and_conditions.dart';
 
 
 class ProfileScreen extends StatefulWidget {
@@ -211,47 +213,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
 
-              Container(
-                height: 0.5,
-                color: Colors.grey,
-                margin : EdgeInsets.only(left: 20, right: 20),
-              ),
-
-              Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                ),
-                margin: EdgeInsets.only(left: 10,right: 10),
-                padding: EdgeInsets.only(top: 15,bottom: 15),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        alignment: Alignment.centerLeft,
-                        padding: EdgeInsets.only(left: 10, right: 20),
-                        child: Text("Contact Us"
-                          ,style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black
-                          ),
-                        ),
-                      ),
-                    ),
-
-
-                    GestureDetector(
-                      onTap: (){
-                        //    pushTo(context, PrivacyPolicyScreenView());
-                      },
-                      child: Container(
-                        child:  Icon(Icons.arrow_forward_ios_rounded, size: 17,color: Colors.grey[600],),
-                      ),
-                    ),
-                    const SizedBox(width: 10,),
-                  ],
-                ),
-              ),
+              // Container(
+              //   height: 0.5,
+              //   color: Colors.grey,
+              //   margin : EdgeInsets.only(left: 20, right: 20),
+              // ),
+              //
+              // Container(
+              //   decoration: const BoxDecoration(
+              //     color: Colors.white,
+              //   ),
+              //   margin: EdgeInsets.only(left: 10,right: 10),
+              //   padding: EdgeInsets.only(top: 15,bottom: 15),
+              //   child: Row(
+              //     children: [
+              //       Expanded(
+              //         child: Container(
+              //           alignment: Alignment.centerLeft,
+              //           padding: EdgeInsets.only(left: 10, right: 20),
+              //           child: Text("Contact Us"
+              //             ,style: TextStyle(
+              //                 fontSize: 20,
+              //                 fontWeight: FontWeight.w500,
+              //                 color: Colors.black
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //
+              //
+              //       GestureDetector(
+              //         onTap: (){
+              //           //    pushTo(context, PrivacyPolicyScreenView());
+              //         },
+              //         child: Container(
+              //           child:  Icon(Icons.arrow_forward_ios_rounded, size: 17,color: Colors.grey[600],),
+              //         ),
+              //       ),
+              //       const SizedBox(width: 10,),
+              //     ],
+              //   ),
+              // ),
 
               Container(
                 height: 0.5,
@@ -275,8 +277,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     Expanded(child: GestureDetector(
                       onTap: ()
-                      {
-                        //  pushTo(context, PrivacyPolicyScreenView());
+                      {pushTo(context, PrivacyPolicy());
                       },
                       child: Container(
                         child: const Text("Privacy Policy", style: TextStyle(
@@ -297,7 +298,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     GestureDetector(
                       onTap: (){
-                        //    pushTo(context, PrivacyPolicyScreenView());
+                       pushTo(context, PrivacyPolicy());
                       },
                       child: Container(
                         child:  Icon(Icons.arrow_forward_ios_rounded, size: 17,color: Colors.grey[600],),
@@ -331,7 +332,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Expanded(child: GestureDetector(
                       onTap: ()
                       {
-                        //  pushTo(context, PrivacyPolicyScreenView());
+                        pushTo(context, TermsAndConditions());
                       },
                       child: Container(
                         child: const Text("Terms & Conditions", style: TextStyle(
@@ -353,7 +354,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     GestureDetector(
                       onTap: ()
                       {
-                        //    pushTo(context, PrivacyPolicyScreenView());
+                       pushTo(context, TermsAndConditions());
                       },
                       child: Container(
                         child: Icon(Icons.arrow_forward_ios_rounded, size: 17,color: Colors.grey[600],),
@@ -447,9 +448,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Expanded(child: GestureDetector(
                       onTap: ()
                       {
-
-
-
+                        Prefs.clear();
                         replaceRoute(context, LoginPage());
                       },
                       child: Container(

@@ -295,9 +295,18 @@ class _PickupScreenState extends State<PickupScreen> {
               }
             },
             indicatorColor: Colors.white,
+
               tabs: [
-            Tab(text: "Pickup",),
-            Tab(text: "Collected",),
+            Tab(child: Text("Pickup", style: TextStyle(
+                fontSize: 17,
+                color: Colors.white
+            ),
+            ),),
+            Tab(child:Text("Collected", style: TextStyle(
+                fontSize: 17,
+                color: Colors.white
+            ),
+            )),
           ]),
         ),
         body: TabBarView(

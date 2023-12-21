@@ -64,7 +64,7 @@ class _EditJourneyPlaner extends State<EditJourneyPlaner> {
           ),
         ),
         title: Text(
-          "Edit Journey Planer",
+          "Edit Journey Planner",
           style: TextStyle(
               fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white),
         ),
@@ -256,7 +256,7 @@ class _EditJourneyPlaner extends State<EditJourneyPlaner> {
                       ),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          updateJourneyPlanner(context, widget.meetingGroups.meetings?[0].id.toString()??"");
+                          updateJourneyPlanner(context);
                         }
                       },
                     ),
@@ -270,7 +270,7 @@ class _EditJourneyPlaner extends State<EditJourneyPlaner> {
     );
   }
 
-  updateJourneyPlanner(BuildContext context, String id)async{
+  updateJourneyPlanner(BuildContext context)async{
     Map<String, dynamic> params = new Map<String, String>();
     params["field_representative_name"] = widget.meetingGroups.meetings?[0].fieldRepresentativeName;
     params["user_id"] = widget.meetingGroups.meetings?[0].userId.toString();
@@ -278,7 +278,7 @@ class _EditJourneyPlaner extends State<EditJourneyPlaner> {
 
     params["from_date"] = fromDateController.text.toString();
     params["to_date"] = toDateController.text.toString();
-
+    params['prev_city'] = widget.meetingGroups.city.toString();
 
     String temp = "";
 
@@ -302,7 +302,7 @@ class _EditJourneyPlaner extends State<EditJourneyPlaner> {
       showLoader(context);
     });
 
-    await ApiRepo().updateJourneyPlanner(params, context,id);
+    await ApiRepo().updateJourneyPlanner(params, context);
   }
 
 
